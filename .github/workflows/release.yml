@@ -35,73 +35,12 @@ jobs:
         id: version
         run: echo "version=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
 
-  build:
+  create-release:
+    runs-on: ubuntu-latest
     needs: check-version
     if: needs.check-version.outputs.changed == 'true'
-    strategy:
-      matrix:
-        include:
-          - os: macos-latest
-            platform: darwin
-            arch: arm64
-            name: ambry-darwin-arm64
-          - os: macos-13
-            platform: darwin
-            arch: x64
-            name: ambry-darwin-x64
-          - os: ubuntu-latest
-            platform: linux
-            arch: x64
-            name: ambry-linux-x64
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Install Linux dependencies
-        if: matrix.platform == 'linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
-
-      - name: Compile
-        run: bun run build
-
-      - name: Bundle
-        run: bun run bundle
-
-      - name: Package macOS
-        if: matrix.platform == 'darwin'
-        run: |
-          cd dist
-          tar czf ../${{ matrix.name }}.tar.gz Ambry.app
-
-      - name: Package Linux
-        if: matrix.platform == 'linux'
-        run: |
-          cd dist
-          tar czf ../${{ matrix.name }}.tar.gz ambry
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.name }}
-          path: ${{ matrix.name }}.tar.gz
-
-  release:
-    runs-on: ubuntu-latest
-    needs: [check-version, build]
-    if: needs.check-version.outputs.changed == 'true'
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
 
       - name: Create git tag
         run: |
@@ -114,14 +53,58 @@ jobs:
           tag_name: "v${{ needs.check-version.outputs.version }}"
           generate_release_notes: true
           draft: false
-          files: |
-            artifacts/ambry-darwin-arm64/ambry-darwin-arm64.tar.gz
-            artifacts/ambry-darwin-x64/ambry-darwin-x64.tar.gz
-            artifacts/ambry-linux-x64/ambry-linux-x64.tar.gz
+
+  build:
+    needs: [check-version, create-release]
+    if: needs.check-version.outputs.changed == 'true'
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            name: ambry-darwin-arm64
+          - os: macos-13
+            name: ambry-darwin-x64
+          - os: ubuntu-latest
+            name: ambry-linux-x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: "v${{ needs.check-version.outputs.version }}"
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Compile
+        run: bun run build
+
+      - name: Bundle
+        run: bun run bundle
+
+      - name: Package
+        run: |
+          cd dist
+          if [ -d "Ambry.app" ]; then
+            tar czf ../${{ matrix.name }}.tar.gz Ambry.app
+          else
+            tar czf ../${{ matrix.name }}.tar.gz ambry
+          fi
+
+      - name: Upload to release
+        run: gh release upload "v${{ needs.check-version.outputs.version }}" ${{ matrix.name }}.tar.gz --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   update-homebrew:
     runs-on: ubuntu-latest
-    needs: [check-version, release]
+    needs: [check-version, build]
     if: needs.check-version.outputs.changed == 'true'
     steps:
       - name: Download release archives and compute SHAs
