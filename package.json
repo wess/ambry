@@ -1,0 +1,39 @@
+{
+  "name": "ambry",
+  "module": "src/host/index.ts",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.20.1",
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/lang-sql": "^6.10.0",
+    "@codemirror/language": "^6.12.2",
+    "@codemirror/search": "^6.6.0",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.40.0",
+    "@mantine/code-highlight": "^8.3.18",
+    "@mantine/core": "^8.3.18",
+    "@mantine/hooks": "^8.3.18",
+    "@mantine/modals": "^8.3.18",
+    "@mantine/notifications": "^8.3.18",
+    "@replit/codemirror-vim": "^6.3.0",
+    "@tanstack/react-query": "^5.95.2",
+    "@tanstack/react-router": "^1.168.3",
+    "butter": "npm:butterframework@^1.0.0",
+    "codemirror": "^6.0.2",
+    "lucide-react": "^1.6.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sql-formatter": "^15.7.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3"
+  },
+  "scripts": {
+    "dev": "butter dev",
+    "build": "butter compile",
+    "bundle": "butter bundle"
+  }
+}

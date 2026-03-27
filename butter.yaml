@@ -1,0 +1,12 @@
+window:
+  title: "Ambry"
+  width: 1200
+  height: 800
+
+build:
+  entry: src/app/index.html
+  host: src/host/index.ts
+
+bundle:
+  identifier: io.wess.ambry
+  category: public.app-category.utilities

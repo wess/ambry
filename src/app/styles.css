@@ -1,0 +1,112 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Theme-aware custom properties */
+:root {
+  --ambry-bg-surface: var(--mantine-color-white);
+  --ambry-bg-subtle: #f8f9fa;
+  --ambry-bg-muted: #f1f3f5;
+  --ambry-border: var(--mantine-color-gray-3);
+  --ambry-border-subtle: var(--mantine-color-gray-2);
+  --ambry-text-muted: var(--mantine-color-gray-6);
+  --ambry-grid-header: var(--mantine-color-gray-0);
+  --ambry-grid-stripe: rgba(0,0,0,0.02);
+  --ambry-scrollbar: var(--mantine-color-gray-4);
+  --ambry-scrollbar-hover: var(--mantine-color-gray-5);
+  --ambry-tab-hover: var(--mantine-color-gray-1);
+  --ambry-tab-text: var(--mantine-color-gray-6);
+  --ambry-tab-text-hover: var(--mantine-color-gray-8);
+}
+
+[data-mantine-color-scheme="dark"] {
+  --ambry-bg-surface: var(--mantine-color-dark-8);
+  --ambry-bg-subtle: var(--mantine-color-dark-7);
+  --ambry-bg-muted: var(--mantine-color-dark-6);
+  --ambry-border: var(--mantine-color-dark-5);
+  --ambry-border-subtle: var(--mantine-color-dark-6);
+  --ambry-text-muted: var(--mantine-color-dark-2);
+  --ambry-grid-header: var(--mantine-color-dark-7);
+  --ambry-grid-stripe: rgba(0,0,0,0.08);
+  --ambry-scrollbar: var(--mantine-color-dark-4);
+  --ambry-scrollbar-hover: var(--mantine-color-dark-3);
+  --ambry-tab-hover: var(--mantine-color-dark-6);
+  --ambry-tab-text: var(--mantine-color-dark-2);
+  --ambry-tab-text-hover: var(--mantine-color-dark-0);
+}
+
+/* macOS-style font smoothing */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ambry-scrollbar);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ambry-scrollbar-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Subtle selection color */
+::selection {
+  background: rgba(25, 113, 194, 0.3);
+}
+
+/* Remove default focus outlines, Mantine handles focus */
+:focus-visible {
+  outline: none;
+}
+
+/* Smooth transitions everywhere */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-duration: 120ms;
+  transition-timing-function: ease;
+}
+
+/* Override for inputs/editors that shouldn't transition */
+input, textarea, .cm-editor, .cm-editor * {
+  transition: none !important;
+}
+
+/* Workspace tab styling */
+.ambry-tab {
+  color: var(--ambry-tab-text) !important;
+  background: transparent !important;
+}
+
+.ambry-tab:hover {
+  color: var(--ambry-tab-text-hover) !important;
+  background: var(--ambry-tab-hover) !important;
+}
+
+.ambry-tab[data-active] {
+  color: var(--mantine-color-text) !important;
+  border-bottom-color: var(--mantine-color-blue-6) !important;
+  background: transparent !important;
+}
