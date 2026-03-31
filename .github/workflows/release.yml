@@ -93,12 +93,28 @@ jobs:
         shell: pwsh
         run: |
           nuget install Microsoft.Web.WebView2 -OutputDirectory webview2
-          $loader = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2Loader.dll" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
-          Copy-Item $loader.FullName -Destination "C:\Windows\System32\WebView2Loader.dll"
-          $lib = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2LoaderStatic.lib" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
-          if ($lib) { Copy-Item $lib.FullName -Destination "WebView2Loader.lib" }
-          $header = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2.h" | Select-Object -First 1
+          $pkgDir = Get-ChildItem -Path webview2 -Directory | Select-Object -First 1
+
+          # DLL for runtime
+          $dll = Get-ChildItem -Path $pkgDir.FullName -Recurse -Filter "WebView2Loader.dll" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
+          Copy-Item $dll.FullName -Destination "C:\Windows\System32\WebView2Loader.dll"
+
+          # Static lib for linking — copy as WebView2Loader.lib so -lWebView2Loader finds it
+          $staticLib = Get-ChildItem -Path $pkgDir.FullName -Recurse -Filter "WebView2LoaderStatic.lib" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
+          if ($staticLib) {
+            Copy-Item $staticLib.FullName -Destination "WebView2Loader.lib"
+          } else {
+            # Fall back to the import lib
+            $importLib = Get-ChildItem -Path $pkgDir.FullName -Recurse -Filter "WebView2Loader.dll.lib" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
+            if ($importLib) { Copy-Item $importLib.FullName -Destination "WebView2Loader.lib" }
+          }
+
+          # Headers
+          $header = Get-ChildItem -Path $pkgDir.FullName -Recurse -Filter "WebView2.h" | Select-Object -First 1
           if ($header) { Copy-Item (Join-Path $header.DirectoryName "*.h") -Destination "." }
+
+          # Add CWD to library search path for GCC
+          echo "LIBRARY_PATH=$PWD" >> $env:GITHUB_ENV
 
       # ── Build ───────────────────────────────────────────────────
       - name: Compile
