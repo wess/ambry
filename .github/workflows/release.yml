@@ -64,9 +64,6 @@ jobs:
           - os: macos-latest
             name: ambry-darwin-arm64
             artifact: tar
-          - os: macos-13
-            name: ambry-darwin-x64
-            artifact: tar
           - os: ubuntu-latest
             name: ambry-linux-x64
             artifact: linux
@@ -100,8 +97,8 @@ jobs:
           Copy-Item $loader.FullName -Destination "C:\Windows\System32\WebView2Loader.dll"
           $lib = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2LoaderStatic.lib" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
           if ($lib) { Copy-Item $lib.FullName -Destination "WebView2Loader.lib" }
-          $headerDir = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2.h" | Select-Object -First 1
-          if ($headerDir) { Copy-Item $headerDir.DirectoryName\* -Destination "." -Filter "*.h" }
+          $header = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2.h" | Select-Object -First 1
+          if ($header) { Copy-Item (Join-Path $header.DirectoryName "*.h") -Destination "." }
 
       # ── Build ───────────────────────────────────────────────────
       - name: Compile
@@ -248,7 +245,7 @@ jobs:
         run: |
           VERSION="${{ needs.check-version.outputs.version }}"
           BASE="https://github.com/wess/ambry/releases/download/v${VERSION}"
-          for target in darwin-arm64 darwin-x64 linux-x64; do
+          for target in darwin-arm64 linux-x64; do
             FILE="ambry-${target}.tar.gz"
             for i in $(seq 1 30); do
               if curl -fsSL -o "/tmp/${FILE}" "${BASE}/${FILE}" 2>/dev/null; then
@@ -281,13 +278,8 @@ jobs:
             license "MIT"
 
             if OS.mac?
-              if Hardware::CPU.intel?
-                url "https://github.com/wess/ambry/releases/download/v#{version}/ambry-darwin-x64.tar.gz"
-                sha256 "SHA_DARWIN_X64_PLACEHOLDER"
-              else
-                url "https://github.com/wess/ambry/releases/download/v#{version}/ambry-darwin-arm64.tar.gz"
-                sha256 "SHA_DARWIN_ARM64_PLACEHOLDER"
-              end
+              url "https://github.com/wess/ambry/releases/download/v#{version}/ambry-darwin-arm64.tar.gz"
+              sha256 "SHA_DARWIN_ARM64_PLACEHOLDER"
             elsif OS.linux?
               url "https://github.com/wess/ambry/releases/download/v#{version}/ambry-linux-x64.tar.gz"
               sha256 "SHA_LINUX_X64_PLACEHOLDER"
@@ -320,7 +312,6 @@ jobs:
           end
           RUBY
           sed -i "s/VERSION_PLACEHOLDER/${VERSION}/g" tap/Formula/ambry.rb
-          sed -i "s/SHA_DARWIN_X64_PLACEHOLDER/${{ steps.shas.outputs.sha_darwin_x64 }}/g" tap/Formula/ambry.rb
           sed -i "s/SHA_DARWIN_ARM64_PLACEHOLDER/${{ steps.shas.outputs.sha_darwin_arm64 }}/g" tap/Formula/ambry.rb
           sed -i "s/SHA_LINUX_X64_PLACEHOLDER/${{ steps.shas.outputs.sha_linux_x64 }}/g" tap/Formula/ambry.rb
 
