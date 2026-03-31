@@ -1,6 +1,6 @@
 {
   "name": "ambry",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "module": "src/host/index.ts",
   "type": "module",
   "private": true,
@@ -20,7 +20,7 @@
     "@replit/codemirror-vim": "^6.3.0",
     "@tanstack/react-query": "^5.95.2",
     "@tanstack/react-router": "^1.168.7",
-    "butter": "npm:butterframework@^1.1.2",
+    "butter": "npm:butterframework@^1.2.1",
     "codemirror": "^6.0.2",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",

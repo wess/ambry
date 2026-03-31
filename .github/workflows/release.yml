@@ -58,14 +58,21 @@ jobs:
     needs: [check-version, create-release]
     if: needs.check-version.outputs.changed == 'true'
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: macos-latest
             name: ambry-darwin-arm64
+            artifact: tar
           - os: macos-13
             name: ambry-darwin-x64
+            artifact: tar
           - os: ubuntu-latest
             name: ambry-linux-x64
+            artifact: linux
+          - os: windows-latest
+            name: ambry-windows-x64
+            artifact: windows
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
@@ -76,29 +83,158 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      # ── Linux deps ──────────────────────────────────────────────
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libfuse2
 
+      # ── Windows deps ────────────────────────────────────────────
+      - name: Install WebView2
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          nuget install Microsoft.Web.WebView2 -OutputDirectory webview2
+          $loader = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2Loader.dll" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
+          Copy-Item $loader.FullName -Destination "C:\Windows\System32\WebView2Loader.dll"
+          $lib = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2LoaderStatic.lib" | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1
+          if ($lib) { Copy-Item $lib.FullName -Destination "WebView2Loader.lib" }
+          $headerDir = Get-ChildItem -Path webview2 -Recurse -Filter "WebView2.h" | Select-Object -First 1
+          if ($headerDir) { Copy-Item $headerDir.DirectoryName\* -Destination "." -Filter "*.h" }
+
+      # ── Build ───────────────────────────────────────────────────
       - name: Compile
         run: bun run build
 
       - name: Bundle
         run: bun run bundle
 
-      - name: Package
+      # ── Package: macOS ──────────────────────────────────────────
+      - name: Package macOS
+        if: matrix.artifact == 'tar'
         run: |
           cd dist
-          if [ -d "Ambry.app" ]; then
-            tar czf ../${{ matrix.name }}.tar.gz Ambry.app
-          else
-            tar czf ../${{ matrix.name }}.tar.gz ambry
-          fi
+          tar czf ../${{ matrix.name }}.tar.gz Ambry.app
 
-      - name: Upload to release
+      # ── Package: Linux (.AppImage + .deb) ───────────────────────
+      - name: Package Linux AppImage
+        if: matrix.artifact == 'linux'
+        run: |
+          curl -fsSL -o appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+          ARCH=x86_64 ./appimagetool dist/Ambry.AppDir ${{ matrix.name }}.AppImage
+
+      - name: Package Linux deb
+        if: matrix.artifact == 'linux'
+        run: |
+          VERSION="${{ needs.check-version.outputs.version }}"
+          PKG="ambry_${VERSION}_amd64"
+          mkdir -p "${PKG}/DEBIAN"
+          mkdir -p "${PKG}/usr/bin"
+          mkdir -p "${PKG}/usr/share/applications"
+
+          cp dist/Ambry.AppDir/usr/bin/ambry "${PKG}/usr/bin/ambry"
+          chmod 755 "${PKG}/usr/bin/ambry"
+
+          cat > "${PKG}/usr/share/applications/ambry.desktop" << 'EOF'
+          [Desktop Entry]
+          Type=Application
+          Name=Ambry
+          Exec=ambry
+          Icon=ambry
+          Categories=Utility;Development;
+          Comment=Desktop database management GUI
+          EOF
+
+          cat > "${PKG}/DEBIAN/control" << EOF
+          Package: ambry
+          Version: ${VERSION}
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Depends: libgtk-3-0, libwebkit2gtk-4.1-0
+          Maintainer: Wess Cope <wess@wess.io>
+          Description: Desktop database management GUI
+           Open-source, cross-platform database client supporting
+           PostgreSQL, MySQL, and SQLite.
+          EOF
+
+          dpkg-deb --build "${PKG}"
+          mv "${PKG}.deb" "${{ matrix.name }}.deb"
+
+      # ── Package: Windows (.zip + NSIS installer) ────────────────
+      - name: Package Windows zip
+        if: matrix.artifact == 'windows'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "dist\Ambry\*" -DestinationPath "${{ matrix.name }}.zip"
+
+      - name: Package Windows installer
+        if: matrix.artifact == 'windows'
+        shell: pwsh
+        run: |
+          $version = "${{ needs.check-version.outputs.version }}"
+          choco install nsis -y
+          $nsi = @"
+          !include "MUI2.nsh"
+
+          Name "Ambry"
+          OutFile "${{ matrix.name }}-setup.exe"
+          InstallDir "`$PROGRAMFILES64\Ambry"
+          RequestExecutionLevel admin
+
+          !insertmacro MUI_PAGE_DIRECTORY
+          !insertmacro MUI_PAGE_INSTFILES
+          !insertmacro MUI_LANGUAGE "English"
+
+          Section "Install"
+            SetOutPath "`$INSTDIR"
+            File /r "dist\Ambry\*.*"
+
+            CreateDirectory "`$SMPROGRAMS\Ambry"
+            CreateShortcut "`$SMPROGRAMS\Ambry\Ambry.lnk" "`$INSTDIR\ambry.exe"
+            CreateShortcut "`$DESKTOP\Ambry.lnk" "`$INSTDIR\ambry.exe"
+
+            WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Ambry" "DisplayName" "Ambry"
+            WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Ambry" "DisplayVersion" "${version}"
+            WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Ambry" "UninstallString" "`$INSTDIR\uninstall.exe"
+            WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Ambry" "Publisher" "Wess Cope"
+            WriteUninstaller "`$INSTDIR\uninstall.exe"
+          SectionEnd
+
+          Section "Uninstall"
+            RMDir /r "`$INSTDIR"
+            RMDir /r "`$SMPROGRAMS\Ambry"
+            Delete "`$DESKTOP\Ambry.lnk"
+            DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Ambry"
+          SectionEnd
+          "@
+          $nsi | Out-File -Encoding ASCII "installer.nsi"
+          makensis installer.nsi
+
+      # ── Upload ──────────────────────────────────────────────────
+      - name: Upload macOS
+        if: matrix.artifact == 'tar'
         run: gh release upload "v${{ needs.check-version.outputs.version }}" ${{ matrix.name }}.tar.gz --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload Linux
+        if: matrix.artifact == 'linux'
+        run: |
+          gh release upload "v${{ needs.check-version.outputs.version }}" \
+            ${{ matrix.name }}.AppImage \
+            ${{ matrix.name }}.deb \
+            --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload Windows
+        if: matrix.artifact == 'windows'
+        shell: pwsh
+        run: |
+          gh release upload "v${{ needs.check-version.outputs.version }}" "${{ matrix.name }}.zip" "${{ matrix.name }}-setup.exe" --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 
