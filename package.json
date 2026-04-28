@@ -1,6 +1,6 @@
 {
   "name": "ambry",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "module": "src/host/index.ts",
   "type": "module",
   "private": true,
@@ -20,7 +20,7 @@
     "@replit/codemirror-vim": "^6.3.0",
     "@tanstack/react-query": "^5.95.2",
     "@tanstack/react-router": "^1.168.7",
-    "butter": "npm:butterframework@^1.2.2",
+    "butter": "github:wess/butter#main",
     "codemirror": "^6.0.2",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",
@@ -28,13 +28,18 @@
     "sql-formatter": "^15.7.2"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@types/bun": "latest",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3"
   },
   "scripts": {
+    "prebuild": "bun run scripts/prebuild.ts",
+    "predev": "bun run scripts/prebuild.ts",
     "dev": "butter dev",
     "build": "butter compile",
-    "bundle": "butter bundle"
+    "bundle": "butter bundle",
+    "sign": "butter sign",
+    "release:local": "bun run build && bun run bundle && bun run sign"
   }
 }

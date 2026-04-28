@@ -1,4 +1,4 @@
-import type { Menu } from "butter"
+import type { Menu } from "butter/types"
 
 const menu: Menu = [
   {

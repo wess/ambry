@@ -85,7 +85,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libfuse2
+          sudo apt-get install -y clang libgtk-3-dev libwebkit2gtk-4.1-dev libfuse2
 
       # ── Windows deps ────────────────────────────────────────────
       - name: Install WebView2
@@ -122,6 +122,34 @@ jobs:
 
       - name: Bundle
         run: bun run bundle
+
+      # ── Sign: macOS ─────────────────────────────────────────────
+      # Re-signs the entire .app bundle after `butter bundle` so Info.plist,
+      # resources, and the Mach-O binary share one signature. Without this
+      # step, downloaded apps fail Gatekeeper with "damaged" because
+      # bun build --compile only linker-signs the inner binary.
+      #
+      # When APPLE_ID / APPLE_TEAM_ID / APPLE_APP_PASSWORD secrets are
+      # configured, the app is also notarized and stapled — that removes
+      # the "unidentified developer" prompt entirely. Without those secrets
+      # the ad-hoc signature still fixes "damaged"; users get the standard
+      # right-click → Open flow on first launch.
+      - name: Sign macOS
+        if: matrix.artifact == 'tar'
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+        run: |
+          if [ -n "$APPLE_ID" ] && [ -n "$APPLE_TEAM_ID" ] && [ -n "$APPLE_APP_PASSWORD" ] && [ -n "$APPLE_SIGNING_IDENTITY" ]; then
+            echo "Signing with Developer ID and notarizing..."
+            bun run sign -- --identity "$APPLE_SIGNING_IDENTITY" --notarize
+          else
+            echo "Apple credentials not configured — falling back to ad-hoc signature."
+            codesign --force --deep --sign - --options runtime --identifier io.wess.ambry dist/Ambry.app
+          fi
+          codesign --verify --deep --strict --verbose=2 dist/Ambry.app
 
       # ── Package: macOS ──────────────────────────────────────────
       - name: Package macOS

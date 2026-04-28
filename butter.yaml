@@ -10,3 +10,9 @@ build:
 bundle:
   identifier: io.wess.ambry
   category: public.app-category.utilities
+
+dev:
+  mcp:
+    enabled: true
+    port: 4711
+    consoleBuffer: 1000
