@@ -136,53 +136,41 @@ jobs:
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           path: tap
 
-      - name: Update formula
+      - name: Update cask
         run: |
           VERSION="${{ needs.check-version.outputs.version }}"
-          cat > tap/Formula/ambry.rb << 'RUBY'
-          class Ambry < Formula
-            desc "Open-source, cross-platform database client"
-            homepage "https://github.com/wess/ambry"
-            url "https://github.com/wess/ambry/releases/download/vVERSION_PLACEHOLDER/ambry-darwin-arm64.tar.gz"
+          mkdir -p tap/Casks
+          cat > tap/Casks/ambry.rb << 'RUBY'
+          cask "ambry" do
             version "VERSION_PLACEHOLDER"
             sha256 "SHA_DARWIN_ARM64_PLACEHOLDER"
-            license "MIT"
+
+            url "https://github.com/wess/ambry/releases/download/v#{version}/ambry-darwin-arm64.tar.gz"
+            name "Ambry"
+            desc "Open-source, cross-platform database client"
+            homepage "https://github.com/wess/ambry"
 
             depends_on arch: :arm64
-            depends_on :macos
 
-            def install
-              bundle = prefix/"Ambry.app"
-              bundle.install Dir["*"]
-              bin.write_exec_script bundle/"Contents/MacOS/ambry"
-            end
+            app "Ambry.app"
 
-            def caveats
-              <<~EOS
-                Ambry.app has been installed to:
-                  #{prefix}/Ambry.app
-
-                To add it to Applications:
-                  ln -sf #{prefix}/Ambry.app /Applications/Ambry.app
-              EOS
-            end
-
-            test do
-              assert_path_exists bin/"ambry"
-            end
+            zap trash: [
+              "~/Library/Application Support/Ambry",
+              "~/Library/Preferences/io.wess.ambry.plist",
+            ]
           end
           RUBY
-          sed -i "s/VERSION_PLACEHOLDER/${VERSION}/g" tap/Formula/ambry.rb
-          sed -i "s/SHA_DARWIN_ARM64_PLACEHOLDER/${{ steps.shas.outputs.sha_darwin_arm64 }}/g" tap/Formula/ambry.rb
+          sed -i "s/VERSION_PLACEHOLDER/${VERSION}/g" tap/Casks/ambry.rb
+          sed -i "s/SHA_DARWIN_ARM64_PLACEHOLDER/${{ steps.shas.outputs.sha_darwin_arm64 }}/g" tap/Casks/ambry.rb
 
-      - name: Push updated formula
+      - name: Push updated cask
         run: |
           cd tap
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/ambry.rb
+          git add Casks/ambry.rb
           if git diff --cached --quiet; then
-            echo "Formula unchanged — skipping push."
+            echo "Cask unchanged — skipping push."
           else
             git commit -m "Update ambry to v${{ needs.check-version.outputs.version }}"
             git push
