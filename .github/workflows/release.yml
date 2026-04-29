@@ -94,8 +94,13 @@ jobs:
             echo "Signing with Developer ID and notarizing..."
             bun run sign -- --identity "$APPLE_SIGNING_IDENTITY" --notarize
           else
+            # Ad-hoc signature WITHOUT Hardened Runtime: JavaScriptCore (Bun)
+            # needs JIT, which requires either no Hardened Runtime or a
+            # `com.apple.security.cs.allow-jit` entitlement. We don't ship
+            # entitlements in the unsigned path, so we omit `--options runtime`
+            # to keep the app launchable.
             echo "Apple credentials not configured — falling back to ad-hoc signature."
-            codesign --force --deep --sign - --options runtime --identifier io.wess.ambry dist/Ambry.app
+            codesign --force --deep --sign - --identifier io.wess.ambry dist/Ambry.app
           fi
           codesign --verify --deep --strict --verbose=2 dist/Ambry.app
 
