@@ -152,8 +152,9 @@ jobs:
             depends_on :macos
 
             def install
-              prefix.install "Ambry.app"
-              bin.write_exec_script prefix/"Ambry.app/Contents/MacOS/ambry"
+              bundle = prefix/"Ambry.app"
+              bundle.install Dir["*"]
+              bin.write_exec_script bundle/"Contents/MacOS/ambry"
             end
 
             def caveats
