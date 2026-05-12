@@ -40,6 +40,7 @@
     "build": "butter compile",
     "bundle": "butter bundle",
     "sign": "butter sign",
-    "release:local": "bun run build && bun run bundle && bun run sign"
+    "package": "butter package",
+    "release:local": "bun run build && bun run bundle && bun run sign && bun run package"
   }
 }

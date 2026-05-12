@@ -4,7 +4,32 @@ A cross-platform, open-source database client built with [Butter](https://github
 
 Supports **PostgreSQL**, **MySQL/MariaDB**, and **SQLite** via Bun's built-in drivers.
 
-## Quick Start
+## Install
+
+**macOS — Homebrew (recommended).** Homebrew strips the quarantine attribute on install, so the app launches without a "damaged" prompt.
+
+```bash
+brew install --cask wess/packages/ambry
+```
+
+First time installing from this tap:
+
+```bash
+brew tap wess/packages
+brew install --cask ambry
+```
+
+**macOS — direct download.** Grab `Ambry.dmg` from the [latest release](https://github.com/wess/ambry/releases/latest), mount it, and drag Ambry into Applications.
+
+If macOS shows *"Ambry is damaged and can't be opened"*, the release wasn't notarized for that build — remove the quarantine flag once and re-open:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Ambry.app
+```
+
+Notarized releases (CI builds with Apple Developer credentials configured) skip this step entirely.
+
+## Quick Start (development)
 
 ```bash
 bun install

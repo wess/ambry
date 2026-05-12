@@ -58,6 +58,16 @@ jobs:
     needs: [check-version, create-release]
     if: needs.check-version.outputs.changed == 'true'
     runs-on: macos-latest
+    # All three signing creds are wired through env so butter.yaml's
+    # `{APPLE_*}` placeholders resolve at config-load time. When the
+    # secrets aren't set (forks, PR previews), the resolved values are
+    # empty strings and butter falls back to ad-hoc signing without
+    # attempting notarization.
+    env:
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+      APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -67,50 +77,49 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Import signing certificate
+        if: env.APPLE_SIGNING_IDENTITY != ''
+        env:
+          CERT_P12: ${{ secrets.APPLE_CERT_P12 }}
+          CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # Import the Developer ID Application cert into a temporary keychain
+          # so `codesign` can find it. The keychain is wiped at job end.
+          KEYCHAIN="$RUNNER_TEMP/build.keychain"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          echo "$CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" -P "$CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | sed s/\"//g)
+          rm -f "$RUNNER_TEMP/cert.p12"
+
       - name: Compile
         run: bun run build
 
-      - name: Bundle
+      - name: Bundle (.app)
         run: bun run bundle
 
-      # Re-signs the entire .app bundle after `butter bundle` so Info.plist,
-      # resources, and the Mach-O binary share one signature. Without this
-      # step, downloaded apps fail Gatekeeper with "damaged" because
-      # bun build --compile only linker-signs the inner binary.
-      #
-      # When APPLE_ID / APPLE_TEAM_ID / APPLE_APP_PASSWORD secrets are
-      # configured, the app is also notarized and stapled — that removes
-      # the "unidentified developer" prompt entirely. Without those secrets
-      # the ad-hoc signature still fixes "damaged"; users get the standard
-      # right-click → Open flow on first launch.
-      - name: Sign macOS
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+      # Reads bundle.macos from butter.yaml. With creds in env, this signs
+      # with Developer ID + hardened runtime + JIT entitlements and submits
+      # for notarization. Without creds, falls back to an ad-hoc signature
+      # so the .app launches locally (right-click → Open on first run).
+      - name: Sign + notarize
+        run: bun run sign
+
+      - name: Package (.dmg)
+        run: bun run package
+
+      - name: Verify signature
         run: |
-          if [ -n "$APPLE_ID" ] && [ -n "$APPLE_TEAM_ID" ] && [ -n "$APPLE_APP_PASSWORD" ] && [ -n "$APPLE_SIGNING_IDENTITY" ]; then
-            echo "Signing with Developer ID and notarizing..."
-            bun run sign -- --identity "$APPLE_SIGNING_IDENTITY" --notarize
-          else
-            # Ad-hoc signature WITHOUT Hardened Runtime: JavaScriptCore (Bun)
-            # needs JIT, which requires either no Hardened Runtime or a
-            # `com.apple.security.cs.allow-jit` entitlement. We don't ship
-            # entitlements in the unsigned path, so we omit `--options runtime`
-            # to keep the app launchable.
-            echo "Apple credentials not configured — falling back to ad-hoc signature."
-            codesign --force --deep --sign - --identifier io.wess.ambry dist/Ambry.app
-          fi
           codesign --verify --deep --strict --verbose=2 dist/Ambry.app
+          spctl --assess --type execute --verbose dist/Ambry.app || \
+            echo "spctl assessment failed (expected for ad-hoc / unnotarized builds)"
 
-      - name: Package macOS
-        run: |
-          cd dist
-          tar czf ../ambry-darwin-arm64.tar.gz Ambry.app
-
-      - name: Upload macOS
-        run: gh release upload "v${{ needs.check-version.outputs.version }}" ambry-darwin-arm64.tar.gz --clobber
+      - name: Upload DMG
+        run: gh release upload "v${{ needs.check-version.outputs.version }}" dist/Ambry.dmg --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -119,19 +128,19 @@ jobs:
     needs: [check-version, build]
     if: needs.check-version.outputs.changed == 'true'
     steps:
-      - name: Download darwin-arm64 archive and compute SHA
+      - name: Download DMG and compute SHA
         id: shas
         run: |
           VERSION="${{ needs.check-version.outputs.version }}"
-          URL="https://github.com/wess/ambry/releases/download/v${VERSION}/ambry-darwin-arm64.tar.gz"
+          URL="https://github.com/wess/ambry/releases/download/v${VERSION}/Ambry.dmg"
           for i in $(seq 1 30); do
-            if curl -fsSL -o /tmp/ambry-darwin-arm64.tar.gz "${URL}" 2>/dev/null; then
+            if curl -fsSL -o /tmp/Ambry.dmg "${URL}" 2>/dev/null; then
               break
             fi
-            echo "Waiting for darwin-arm64 archive... ($i/30)"
+            echo "Waiting for Ambry.dmg... ($i/30)"
             sleep 10
           done
-          SHA=$(sha256sum /tmp/ambry-darwin-arm64.tar.gz | cut -d' ' -f1)
+          SHA=$(sha256sum /tmp/Ambry.dmg | cut -d' ' -f1)
           echo "sha_darwin_arm64=${SHA}" >> "$GITHUB_OUTPUT"
 
       - name: Checkout homebrew tap
@@ -150,7 +159,7 @@ jobs:
             version "VERSION_PLACEHOLDER"
             sha256 "SHA_DARWIN_ARM64_PLACEHOLDER"
 
-            url "https://github.com/wess/ambry/releases/download/v#{version}/ambry-darwin-arm64.tar.gz"
+            url "https://github.com/wess/ambry/releases/download/v#{version}/Ambry.dmg"
             name "Ambry"
             desc "Open-source, cross-platform database client"
             homepage "https://github.com/wess/ambry"
