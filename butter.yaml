@@ -2,10 +2,14 @@ window:
   title: "Ambry"
   width: 1200
   height: 800
+  material: vibrancy
 
 build:
   entry: src/app/index.html
   host: src/host/index.ts
+
+plugins:
+  - singleinstance
 
 bundle:
   identifier: io.wess.ambry

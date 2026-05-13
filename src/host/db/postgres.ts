@@ -55,11 +55,29 @@ export const createPostgresAdapter = (config: ConnectionConfig): DbAdapter => {
         WHERE t.table_schema = 'public'
         ORDER BY t.table_name
       `
-      return [...rows].map((r: any) => ({
-        name: r.name,
+      const tables = [...rows].map((r: any) => ({
+        name: r.name as string,
         type: r.type as "table" | "view",
         rowCount: r.row_count != null ? Number(r.row_count) : null,
       }))
+
+      // n_live_tup is 0 until autovacuum/ANALYZE runs, so freshly-loaded
+      // tables look empty in the sidebar. Fall back to real COUNT(*) for
+      // tables whose estimate is 0 or unknown.
+      const needsCount = tables.filter((t) => t.type === "table" && !t.rowCount)
+      await Promise.all(
+        needsCount.map(async (t) => {
+          try {
+            const ident = `"${t.name.replace(/"/g, '""')}"`
+            const result = await getDb().unsafe(`SELECT COUNT(*)::bigint AS c FROM public.${ident}`)
+            const row = [...result][0] as { c: bigint | number | string } | undefined
+            if (row) t.rowCount = Number(row.c)
+          } catch {
+            t.rowCount = null
+          }
+        }),
+      )
+      return tables
     },
 
     getColumns: async (table: string): Promise<ColumnInfoRaw[]> => {

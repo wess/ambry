@@ -54,11 +54,29 @@ export const createMysqlAdapter = (config: ConnectionConfig): DbAdapter => {
         WHERE TABLE_SCHEMA = DATABASE()
         ORDER BY TABLE_NAME
       `
-      return [...rows].map((r: any) => ({
-        name: r.name,
+      const tables = [...rows].map((r: any) => ({
+        name: r.name as string,
         type: r.type as "table" | "view",
         rowCount: r.row_count != null ? Number(r.row_count) : null,
       }))
+
+      // TABLE_ROWS is an approximation for InnoDB and is often 0 until
+      // the stats are refreshed. Fall back to real COUNT(*) when the
+      // estimate is 0 or unknown.
+      const needsCount = tables.filter((t) => t.type === "table" && !t.rowCount)
+      await Promise.all(
+        needsCount.map(async (t) => {
+          try {
+            const ident = `\`${t.name.replace(/`/g, "``")}\``
+            const result = await getDb().unsafe(`SELECT COUNT(*) AS c FROM ${ident}`)
+            const row = [...result][0] as { c: bigint | number | string } | undefined
+            if (row) t.rowCount = Number(row.c)
+          } catch {
+            t.rowCount = null
+          }
+        }),
+      )
+      return tables
     },
 
     getColumns: async (table: string): Promise<ColumnInfoRaw[]> => {
