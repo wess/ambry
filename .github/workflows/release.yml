@@ -134,7 +134,10 @@ jobs:
           </dict>
           </plist>
           PLIST
-          bunx butter sign --notarize --entitlements "$RUNNER_TEMP/entitlements.plist"
+          bunx butter sign \
+            --identity "$APPLE_SIGNING_IDENTITY" \
+            --notarize \
+            --entitlements "$RUNNER_TEMP/entitlements.plist"
 
       - name: Package (.dmg)
         run: bun run package
