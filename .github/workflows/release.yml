@@ -113,12 +113,28 @@ jobs:
       - name: Bundle (.app)
         run: bun run bundle
 
-      # Reads bundle.macos from butter.yaml. With creds in env, this signs
-      # with Developer ID + hardened runtime + JIT entitlements and submits
-      # for notarization. Without creds, falls back to an ad-hoc signature
-      # so the .app launches locally (right-click → Open on first run).
+      # The butter version ambry installs from main only notarizes when passed
+      # --notarize, and does not auto-generate JIT entitlements. Bun's
+      # JavaScriptCore needs allow-jit under hardened runtime or the notarized
+      # app crashes on first launch, so we supply the entitlements explicitly.
+      # Creds are read from the APPLE_* env vars set on this job.
       - name: Sign + notarize
-        run: bun run sign
+        run: |
+          cat > "$RUNNER_TEMP/entitlements.plist" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+          	<key>com.apple.security.cs.allow-jit</key>
+          	<true/>
+          	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+          	<true/>
+          	<key>com.apple.security.cs.disable-library-validation</key>
+          	<true/>
+          </dict>
+          </plist>
+          PLIST
+          bunx butter sign --notarize --entitlements "$RUNNER_TEMP/entitlements.plist"
 
       - name: Package (.dmg)
         run: bun run package
