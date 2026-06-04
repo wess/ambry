@@ -3,6 +3,7 @@ window:
   width: 1200
   height: 800
   material: vibrancy
+  icon: assets/icon.icns
 
 build:
   entry: src/app/index.html

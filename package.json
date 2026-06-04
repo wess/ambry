@@ -1,6 +1,6 @@
 {
   "name": "ambry",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "module": "src/host/index.ts",
   "type": "module",
   "private": true,
@@ -36,8 +36,10 @@
   "scripts": {
     "prebuild": "bun run scripts/prebuild.ts",
     "predev": "bun run scripts/prebuild.ts",
+    "typecheck": "bun run scripts/typecheck.ts",
+    "test": "bun test",
     "dev": "butter dev",
-    "build": "butter compile",
+    "build": "bun run typecheck && butter compile",
     "bundle": "butter bundle",
     "sign": "butter sign",
     "package": "butter package",

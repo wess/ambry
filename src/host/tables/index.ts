@@ -6,6 +6,7 @@ import { csvToInsertSql } from "./csvimport"
 import { compareSchemas } from "./schemacompare"
 import { profileTable } from "./profiling"
 import { generateMockRows } from "./mockdata"
+import type { ConnectionConfig } from "../db/types"
 
 const getActive = () => {
   const id = getActiveConnectionId()
@@ -153,13 +154,20 @@ export const registerTableHandlers = () => {
     const conn = await getConnection(connectionId)
     if (!conn) throw new Error(`Connection not found: ${connectionId}`)
     await disconnect(connectionId)
-    const config = {
-      ...conn,
+    const config: ConnectionConfig = {
+      id: conn.id,
+      type: conn.type,
+      host: conn.host,
+      port: conn.port,
       database,
+      username: conn.username,
+      password: conn.password,
+      filepath: conn.filepath,
       ssl: conn.ssl,
       ssh: conn.ssh,
+      startupCommands: conn.startupCommands,
     }
-    await connect(config as any)
+    await connect(config)
     setActiveConnectionId(connectionId)
     return true
   })

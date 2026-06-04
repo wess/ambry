@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "@tanstack/react-router"
 import { AppShell, Tabs, Group, ActionIcon, Tooltip, Text, Box, Stack, Menu, Select } from "@mantine/core"
 import { notifications } from "@mantine/notifications"
 import { modals } from "@mantine/modals"
-import { TableProperties, Code, ArrowLeft, Table2, Copy, Trash2, Scissors, GitCompare, Settings, Disc, Network } from "lucide-react"
+import { TableProperties, Code, ArrowLeft, Table2, Copy, Trash2, Scissors, GitCompare, Settings as SettingsIcon, Disc, Network } from "lucide-react"
 import { Sidebar } from "../components/sidebar"
 import { DataGrid } from "../components/grid"
 import { GridToolbar } from "../components/grid/toolbar"
@@ -305,7 +305,7 @@ export const ConnectionWorkspacePage = () => {
       const result = await invoke("export:file", {
         table: activeTable,
         format,
-        filename: filePath.split("/").pop() || defaultName,
+        filename: filePath.split("/").pop() || `${activeTable}.csv`,
         path: filePath,
         options: { includeHeaders: true, delimiter: ",", nullAs: "" },
       })
@@ -503,7 +503,7 @@ export const ConnectionWorkspacePage = () => {
           </Tooltip>
           <Tooltip label="Settings">
             <ActionIcon size="sm" onClick={() => setShowSettings(true)} style={{ flexShrink: 0 }}>
-              <Settings size={13} />
+              <SettingsIcon size={13} />
             </ActionIcon>
           </Tooltip>
         </Group>

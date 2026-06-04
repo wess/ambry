@@ -1,8 +1,10 @@
 # Ambry
 
-A cross-platform, open-source database client built with [Butter](https://github.com/wess/butter), React, and Mantine.
+An open-source database client built with [Butter](https://github.com/wess/butter), React, and Mantine.
 
 Supports **PostgreSQL**, **MySQL/MariaDB**, and **SQLite** via Bun's built-in drivers.
+
+> **Platform support:** the 1.0 release ships macOS (Apple Silicon / arm64) only. The Homebrew cask requires `arm64`, and CI builds on macOS. Linux, Windows, and Intel-mac builds are not currently distributed.
 
 ## Install
 
@@ -55,8 +57,6 @@ bun run dev
 
 ## Documentation
 
-- [Features & TODO](TODO.md) — full feature list with completion status
-- [Specification](SPEC.md) — project spec and tech stack
 - [Architecture](docs/architecture.md) — codebase structure and data flow
 - [Configuration](docs/configuration.md) — butter.yaml, app settings, connection settings
 - [Keyboard Shortcuts](docs/shortcuts.md) — all shortcuts and SQL snippets
@@ -73,10 +73,8 @@ bun run dev
 
 ## Stats
 
-- 78 source files
-- 3.80MB frontend bundle
-- 58.78KB host bundle
+- 77 source files
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).

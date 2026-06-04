@@ -1,11 +1,12 @@
 import { join } from "path"
 import { homedir } from "os"
 import { mkdir } from "fs/promises"
+import type { DatabaseType, SslConfig, SshConfig } from "../db/types"
 
-type StoredConnection = {
+export type StoredConnection = {
   id: string
   name: string
-  type: string
+  type: DatabaseType
   host: string
   port: number
   database: string
@@ -13,6 +14,9 @@ type StoredConnection = {
   password: string
   color: string
   filepath?: string
+  ssl?: SslConfig
+  ssh?: SshConfig
+  startupCommands?: string
 }
 
 const dataDir = join(homedir(), ".ambry")
