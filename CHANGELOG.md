@@ -5,6 +5,12 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-06-04
+
+### Fixed
+
+- A corrupt or old-format `~/.ambry/connections.json` (e.g. left by a much older version) no longer hangs the app on "Loading connections…" forever. The file is backed up to `connections.json.corrupt` and the connection list falls back to the empty "add connection" state.
+
 ## [1.0.5] - 2026-06-04
 
 ### Added

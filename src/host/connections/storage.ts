@@ -30,7 +30,19 @@ const readAll = async (): Promise<StoredConnection[]> => {
   await ensureDir()
   const file = Bun.file(filePath)
   if (!(await file.exists())) return []
-  return file.json()
+  // A corrupt or old-format connections.json must never hang the app. If it
+  // can't be parsed into an array, back it up and start empty so the UI shows
+  // the "add connection" state instead of spinning on the list query forever.
+  try {
+    const data = await file.json()
+    if (!Array.isArray(data)) throw new Error("connections.json is not an array")
+    return data as StoredConnection[]
+  } catch {
+    try {
+      await Bun.write(`${filePath}.corrupt`, file)
+    } catch {}
+    return []
+  }
 }
 
 const writeAll = async (connections: StoredConnection[]): Promise<void> => {
