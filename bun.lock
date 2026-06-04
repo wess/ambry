@@ -124,7 +124,7 @@
 
     "bun-types": ["bun-types@1.3.11", "", { "dependencies": { "@types/node": "*" } }, "sha512-1KGPpoxQWl9f6wcZh57LvrPIInQMn2TQ7jsgxqpRzg+l0QPOFvJVH7HmvHo/AiPgwXy+/Thf6Ov3EdVn1vOabg=="],
 
-    "butter": ["butterframework@github:wess/butter#fd158fe", { "peerDependencies": { "typescript": "^5" }, "bin": { "butter": "./src/cli/index.ts" } }, "wess-butter-fd158fe", "sha512-nbHwuQ4ApnTB1M8dQGXF5pCZ+4kntFbzzJOd7trfypU1hmGlEvHgjRghFCeFZi8q26KRNCMXvjCAr3Wjw63kwg=="],
+    "butter": ["butterframework@github:wess/butter#7fa7b83", { "dependencies": { "@modelcontextprotocol/sdk": "^1.29.0" }, "peerDependencies": { "typescript": "^5" }, "bin": { "butter": "./src/cli/index.ts" } }, "wess-butter-7fa7b83", "sha512-uU/2Dyk+CtpWIVqEZkhvLAbnKNiXzNrEUh9/xFyeYpZ3W0FcJ+2lr6I9T2i09JBaoxzl7np6xJpLs8KUuoPquQ=="],
 
     "bytes": ["bytes@3.1.2", "", {}, "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg=="],
 
