@@ -1,6 +1,6 @@
 {
   "name": "ambry",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "module": "src/host/index.ts",
   "type": "module",
   "private": true,
