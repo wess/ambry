@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2026-06-04
+
+### Fixed
+
+- The released app hung forever on "Loading connections…" — a butter compiled-binary IPC bug (the host never received webview calls). Ambry now vendors a patched butter, so the connection list (and every host call) works. The app shows the empty "add connection" state on first run.
+
+### Added
+
+- App version in the window title bar (e.g. "Ambry v1.0.7").
+
 ## [1.0.6] - 2026-06-04
 
 ### Fixed

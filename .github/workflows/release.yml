@@ -113,31 +113,11 @@ jobs:
       - name: Bundle (.app)
         run: bun run bundle
 
-      # The butter version ambry installs from main only notarizes when passed
-      # --notarize, and does not auto-generate JIT entitlements. Bun's
-      # JavaScriptCore needs allow-jit under hardened runtime or the notarized
-      # app crashes on first launch, so we supply the entitlements explicitly.
-      # Creds are read from the APPLE_* env vars set on this job.
+      # Reads bundle.macos from butter.yaml (the vendored butter resolves the
+      # signing identity, hardened runtime, and auto-generated JIT entitlements,
+      # then notarizes + staples). Creds come from the APPLE_* env vars.
       - name: Sign + notarize
-        run: |
-          cat > "$RUNNER_TEMP/entitlements.plist" <<'PLIST'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-          	<key>com.apple.security.cs.allow-jit</key>
-          	<true/>
-          	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
-          	<true/>
-          	<key>com.apple.security.cs.disable-library-validation</key>
-          	<true/>
-          </dict>
-          </plist>
-          PLIST
-          bunx butter sign \
-            --identity "$APPLE_SIGNING_IDENTITY" \
-            --notarize \
-            --entitlements "$RUNNER_TEMP/entitlements.plist"
+        run: bun run sign
 
       - name: Package (.dmg)
         run: bun run package
