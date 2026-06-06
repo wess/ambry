@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ambry — an open-source database client for Postgres, MySQL & SQLite</title>
+    <meta
+      name="description"
+      content="Ambry is an open-source desktop database client for PostgreSQL, MySQL/MariaDB, and SQLite. SQL editor, data grid, schema tools, ER diagrams, charts, and a plugin system — built on Butter, React, and Mantine."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>:root{--accent:#3fb6a8;--accent2:#2f7fd1}</style>
+  </head>
+  <body>
+    <!-- nav -->
+    <nav class="nav">
+      <div class="wrap">
+        <a class="brand" href="index.html"><span class="mark">▤</span> Ambry</a>
+        <button class="navtoggle" aria-label="Menu" data-nav>☰</button>
+        <div class="navlinks" data-navlinks>
+          <a href="#features">Features</a>
+          <a href="#architecture">Tech</a>
+          <a href="docs.html">Docs</a>
+          <a class="btn primary" href="https://github.com/wess/ambry">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- hero -->
+    <header class="hero">
+      <div class="wrap">
+        <span class="pill"><span class="dot"></span> macOS · Postgres · MySQL/MariaDB · SQLite</span>
+        <h1>An open-source <span class="accent">database client</span> that gets out of your way.</h1>
+        <p class="lead">
+          Ambry is a fast desktop client for PostgreSQL, MySQL/MariaDB, and SQLite. A CodeMirror SQL editor, an
+          editable data grid, schema tools, ER diagrams, and charts — all built on Butter, React, and Mantine.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="#start">Get started</a>
+          <a class="btn ghost" href="https://github.com/wess/ambry">View on GitHub →</a>
+        </div>
+
+        <!-- mockup -->
+        <div class="mock">
+          <div class="bar">
+            <span class="hash">▤</span><span>public.orders</span>
+            <span class="muted" style="font-size: 13px">· postgres · 1,284 rows</span>
+            <span class="dots"><i></i><i></i><i></i></span>
+          </div>
+          <div class="body">
+            <div class="msg">
+              <div class="av" style="background: linear-gradient(135deg, #3fb6a8, #2f7fd1)">⌘</div>
+              <div>
+                <div class="who">SQL editor <small>codemirror 6 · autocomplete</small></div>
+                <div class="txt">SELECT id, customer, total FROM orders WHERE total &gt; 100 ORDER BY total DESC;</div>
+              </div>
+            </div>
+            <div class="msg">
+              <div class="av">▦</div>
+              <div>
+                <div class="who">Data grid <small>inline edit · change tracking</small></div>
+                <div class="txt">1042 · Acme Co · $940.00 — edited cell staged, SQL preview ready to apply.</div>
+              </div>
+            </div>
+            <div class="msg">
+              <div class="av">◈</div>
+              <div>
+                <div class="who">Schema tools <small>profiling · compare</small></div>
+                <div class="txt">total: numeric · 0% null · ER diagram links orders → customers.</div>
+              </div>
+            </div>
+            <div class="msg">
+              <div class="av" style="background: linear-gradient(135deg, #3fb6a8, #2f7fd1)">⎈</div>
+              <div>
+                <div class="who">Command palette <small>Cmd+P</small></div>
+                <div class="typing"><i></i><i></i><i></i> jump to table, query, or action</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- features -->
+    <section class="block" id="features">
+      <div class="wrap">
+        <div class="eyebrow">Features</div>
+        <h2>Everything you need to read, write, and reshape your data.</h2>
+        <p class="sub">One client, three engines, and the tooling to actually understand a schema.</p>
+        <div class="grid">
+          <div class="card">
+            <div class="ico">🔌</div>
+            <h3>Connection management</h3>
+            <p>SSL/TLS, SSH tunneling, URL parsing, groups, tags, safe mode, startup commands, and health monitoring.</p>
+          </div>
+          <div class="card">
+            <div class="ico">⌨️</div>
+            <h3>SQL editor</h3>
+            <p>CodeMirror 6 with autocomplete, 17 snippets, Vim mode, formatting, multi-tab, multi-statement, find/replace.</p>
+          </div>
+          <div class="card">
+            <div class="ico">▦</div>
+            <h3>Data grid</h3>
+            <p>Inline editing, column resize/visibility, 18 filter operators, sorting, pagination, FK navigation, and change tracking with SQL preview.</p>
+          </div>
+          <div class="card">
+            <div class="ico">🔍</div>
+            <h3>Cell inspector</h3>
+            <p>A detail sidebar for wide tables, with per-field copy so you never lose a value in a sea of columns.</p>
+          </div>
+          <div class="card">
+            <div class="ico">◈</div>
+            <h3>Schema tools</h3>
+            <p>Structure viewer, data profiling (null %, distribution), and schema comparison with ALTER migration generation.</p>
+          </div>
+          <div class="card">
+            <div class="ico">🕸️</div>
+            <h3>ER diagram</h3>
+            <p>An auto-generated SVG relationship diagram with draggable nodes and zoom for mapping your schema at a glance.</p>
+          </div>
+          <div class="card">
+            <div class="ico">📊</div>
+            <h3>Charts</h3>
+            <p>Bar, line, and pie visualizations rendered straight from query results — zero dependencies.</p>
+          </div>
+          <div class="card">
+            <div class="ico">🔄</div>
+            <h3>Import / Export</h3>
+            <p>CSV, JSON, and SQL with native file dialogs, clipboard paste, and drag-and-drop of .sql files.</p>
+          </div>
+          <div class="card">
+            <div class="ico">🎲</div>
+            <h3>Mock data</h3>
+            <p>Type-aware generation for names, emails, dates, UUIDs, and more to fill tables for testing.</p>
+          </div>
+          <div class="card">
+            <div class="ico">⏺️</div>
+            <h3>Macros</h3>
+            <p>Record, replay, manage, and export/import action sequences to automate the things you do every day.</p>
+          </div>
+          <div class="card">
+            <div class="ico">⎈</div>
+            <h3>Command palette</h3>
+            <p>Cmd+P to quick-jump to tables, queries, and actions without lifting your hands off the keyboard.</p>
+          </div>
+          <div class="card">
+            <div class="ico">🧩</div>
+            <h3>Plugin system</h3>
+            <p>Install and manage database drivers, export formats, and themes. Full light and dark themes across every component.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- architecture -->
+    <section class="block" id="architecture">
+      <div class="wrap">
+        <div class="eyebrow">Tech stack</div>
+        <h2>Native speed, a modern UI, and Bun's built-in drivers.</h2>
+        <div class="split">
+          <ul>
+            <li><span class="ck">✦</span><span><b>Butter runtime</b> — Bun plus a native webview, so the app ships small and starts fast.</span></li>
+            <li><span class="ck">✦</span><span><b>React 19 + Mantine 8</b> — a polished component UI with Tanstack Router and Tanstack Query underneath.</span></li>
+            <li><span class="ck">✦</span><span><b>CodeMirror 6</b> — the SQL editor, with sql-formatter and Vim keybindings built in.</span></li>
+            <li><span class="ck">✦</span><span><b>Bun built-in DB drivers</b> — Postgres, SQLite, and MySQL talk to the database with no extra native deps.</span></li>
+            <li><span class="ck">✦</span><span><b>Lucide icons · MIT licensed</b> — clean iconography across a codebase of 77 source files.</span></li>
+          </ul>
+          <div class="diagram">        Ambry desktop app
+                 │
+       React 19 + Mantine 8 UI
+                 │
+     CodeMirror · Tanstack Query
+                 │
+        Butter (Bun + webview)
+                 │
+      ┌──────────┴───────────┐
+  Bun drivers           file dialogs
+ Postgres·MySQL·SQLite   import/export</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- get started -->
+    <section class="block" id="start">
+      <div class="wrap">
+        <div class="eyebrow">Get started</div>
+        <h2>Install on macOS in one command.</h2>
+        <p class="sub">The 1.0 release ships macOS (Apple Silicon / arm64) only. Homebrew strips quarantine so it launches clean.</p>
+        <div class="code" style="margin-top: 32px; max-width: 720px">
+          <div class="top">
+            <span>install — homebrew</span>
+            <button class="copy" data-copy>Copy</button>
+          </div>
+          <pre data-code><span class="c"># recommended: install the cask</span>
+brew install --cask wess/packages/ambry
+
+<span class="c"># first time using this tap</span>
+brew tap wess/packages
+brew install --cask ambry</pre>
+        </div>
+        <div class="code" style="margin-top: 24px; max-width: 720px">
+          <div class="top">
+            <span>develop from source</span>
+            <button class="copy" data-copy>Copy</button>
+          </div>
+          <pre data-code><span class="c"># clone, install deps, and run in dev</span>
+git clone https://github.com/wess/ambry
+cd ambry
+bun install
+bun run dev</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- cta band -->
+    <section class="band">
+      <div class="wrap">
+        <h2>Open the database, close the friction.</h2>
+        <p>Ambry is MIT licensed and open source. Grab the latest release or build it yourself.</p>
+        <div class="cta">
+          <a class="btn primary" href="docs.html">Read the docs</a>
+          <a class="btn ghost" href="https://github.com/wess/ambry">Star it on GitHub →</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <a class="brand" href="index.html"><span class="mark">▤</span> Ambry</a>
+        <div class="links">
+          <a href="docs.html">Docs</a>
+          <a href="../docs/architecture.md">Architecture</a>
+          <a href="../docs/shortcuts.md">Shortcuts</a>
+          <a href="https://github.com/wess/ambry">GitHub</a>
+          <a href="https://github.com/wess/butter">Butter</a>
+        </div>
+        <span>MIT · © 2026</span>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
