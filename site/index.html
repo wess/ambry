@@ -3,238 +3,267 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ambry — an open-source database client for Postgres, MySQL & SQLite</title>
+    <title>Ambry — a database client for Postgres, MySQL &amp; SQLite</title>
     <meta
       name="description"
-      content="Ambry is an open-source desktop database client for PostgreSQL, MySQL/MariaDB, and SQLite. SQL editor, data grid, schema tools, ER diagrams, charts, and a plugin system — built on Butter, React, and Mantine."
+      content="Ambry is an open-source desktop database client for PostgreSQL, MySQL, and SQLite — an editable data grid, a fast SQL editor, and schema tools in one fast app."
     />
+    <meta property="og:title" content="Ambry — a database client" />
+    <meta
+      property="og:description"
+      content="An editable data grid, a fast SQL editor, and schema tools for Postgres, MySQL, and SQLite."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="styles.css" />
-    <style>:root{--accent:#3fb6a8;--accent2:#2f7fd1}</style>
   </head>
   <body>
-    <!-- nav -->
     <nav class="nav">
       <div class="wrap">
         <a class="brand" href="index.html"><span class="mark">▤</span> Ambry</a>
-        <button class="navtoggle" aria-label="Menu" data-nav>☰</button>
+        <button class="navtoggle" aria-label="Menu" data-nav>≡</button>
         <div class="navlinks" data-navlinks>
           <a href="#features">Features</a>
-          <a href="#architecture">Tech</a>
+          <a href="#engines">Engines</a>
+          <a href="#install">Install</a>
           <a href="docs.html">Docs</a>
-          <a class="btn primary" href="https://github.com/wess/ambry">GitHub</a>
+          <a class="cta" href="https://github.com/wess/ambry">GitHub ↗</a>
         </div>
       </div>
     </nav>
 
-    <!-- hero -->
+    <!-- HERO: the page is a sheet; the demo below is a live grid. -->
     <header class="hero">
       <div class="wrap">
-        <span class="pill"><span class="dot"></span> macOS · Postgres · MySQL/MariaDB · SQLite</span>
-        <h1>An open-source <span class="accent">database client</span> that gets out of your way.</h1>
-        <p class="lead">
-          Ambry is a fast desktop client for PostgreSQL, MySQL/MariaDB, and SQLite. A CodeMirror SQL editor, an
-          editable data grid, schema tools, ER diagrams, and charts — all built on Butter, React, and Mantine.
-        </p>
-        <div class="cta">
-          <a class="btn primary" href="#start">Get started</a>
-          <a class="btn ghost" href="https://github.com/wess/ambry">View on GitHub →</a>
+        <div class="grid-frame">
+          <div class="rownums">
+            <span>1</span><span>2</span><span>3</span>
+          </div>
+          <div class="rows">
+            <div class="hrow">
+              <div class="eyebrow">
+                <span class="tick"></span> ambry <b>·</b> database client
+                <b>·</b> postgres / mysql / sqlite
+              </div>
+            </div>
+            <div class="hrow tall">
+              <h1>The database grid you can <span class="hl">edit</span>.</h1>
+              <p class="lead">
+                Ambry is an open-source desktop client for PostgreSQL, MySQL, and
+                SQLite. Browse tables in an editable grid, run SQL, and inspect
+                schemas — in one fast, keyboard-friendly app.
+              </p>
+            </div>
+            <div class="hrow">
+              <div class="cta">
+                <a class="btn primary" href="#install">Install for macOS</a>
+                <a class="btn ghost" href="docs.html">Read the docs</a>
+                <span class="note">brew install --cask wess/packages/ambry</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- mockup -->
-        <div class="mock">
-          <div class="bar">
-            <span class="hash">▤</span><span>public.orders</span>
-            <span class="muted" style="font-size: 13px">· postgres · 1,284 rows</span>
-            <span class="dots"><i></i><i></i><i></i></span>
+        <!-- the signature: a live, sortable, editable grid -->
+        <div class="demowrap" data-demo>
+          <div class="demobar">
+            <span class="tab">Data</span>
+            <span>Query</span>
+            <span>Structure</span>
+            <span class="muted">·&nbsp; public.orders &nbsp;·&nbsp; postgres</span>
           </div>
-          <div class="body">
-            <div class="msg">
-              <div class="av" style="background: linear-gradient(135deg, #3fb6a8, #2f7fd1)">⌘</div>
-              <div>
-                <div class="who">SQL editor <small>codemirror 6 · autocomplete</small></div>
-                <div class="txt">SELECT id, customer, total FROM orders WHERE total &gt; 100 ORDER BY total DESC;</div>
-              </div>
-            </div>
-            <div class="msg">
-              <div class="av">▦</div>
-              <div>
-                <div class="who">Data grid <small>inline edit · change tracking</small></div>
-                <div class="txt">1042 · Acme Co · $940.00 — edited cell staged, SQL preview ready to apply.</div>
-              </div>
-            </div>
-            <div class="msg">
-              <div class="av">◈</div>
-              <div>
-                <div class="who">Schema tools <small>profiling · compare</small></div>
-                <div class="txt">total: numeric · 0% null · ER diagram links orders → customers.</div>
-              </div>
-            </div>
-            <div class="msg">
-              <div class="av" style="background: linear-gradient(135deg, #3fb6a8, #2f7fd1)">⎈</div>
-              <div>
-                <div class="who">Command palette <small>Cmd+P</small></div>
-                <div class="typing"><i></i><i></i><i></i> jump to table, query, or action</div>
-              </div>
-            </div>
+          <div class="demoscroll">
+            <table class="demogrid" aria-label="Example query result">
+              <thead>
+                <tr>
+                  <th class="num">#</th>
+                  <th data-sort="id">id</th>
+                  <th data-sort="customer">customer</th>
+                  <th data-sort="email">email</th>
+                  <th data-sort="total" data-dir="desc">total <span class="caret">↓</span></th>
+                  <th data-sort="status">status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="num">1</td><td>4821</td><td class="fk">acme-corp</td><td>ops@acme.co</td><td>1284.00</td><td>paid</td></tr>
+                <tr><td class="num">2</td><td>4820</td><td class="fk">globex</td><td>ap@globex.io</td><td>942.50</td><td class="editing">shipped</td></tr>
+                <tr><td class="num">3</td><td>4817</td><td class="fk">initech</td><td class="nul">NULL</td><td>773.20</td><td>paid</td></tr>
+                <tr><td class="num">4</td><td>4809</td><td class="fk">soylent</td><td>billing@soylent.com</td><td>512.75</td><td>refunded</td></tr>
+                <tr><td class="num">5</td><td>4802</td><td class="fk">umbrella</td><td>fin@umbrella.co</td><td>318.00</td><td>paid</td></tr>
+                <tr><td class="num">6</td><td>4788</td><td class="fk">hooli</td><td>ar@hooli.xyz</td><td>96.40</td><td>pending</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="demofoot">
+            <span>6 rows · double-click a cell to edit · click a header to sort</span>
+            <span style="display:flex; gap:18px; flex-wrap:wrap">
+              <span class="legend"><span class="swatch" style="background:var(--pine)"></span> foreign key</span>
+              <span class="legend"><span class="swatch" style="background:var(--amber)"></span> pending edit</span>
+            </span>
           </div>
         </div>
+        <div style="height:64px"></div>
       </div>
     </header>
 
-    <!-- features -->
-    <section class="block" id="features">
+    <!-- ENGINES -->
+    <section class="section" id="engines">
       <div class="wrap">
-        <div class="eyebrow">Features</div>
-        <h2>Everything you need to read, write, and reshape your data.</h2>
-        <p class="sub">One client, three engines, and the tooling to actually understand a schema.</p>
-        <div class="grid">
-          <div class="card">
-            <div class="ico">🔌</div>
-            <h3>Connection management</h3>
-            <p>SSL/TLS, SSH tunneling, URL parsing, groups, tags, safe mode, startup commands, and health monitoring.</p>
+        <div class="section-head">
+          <span class="idx">01</span>
+          <div>
+            <h2>Three engines, one grid</h2>
+            <p>The same editor, grid, and schema tools across every connection — with the differences that matter handled underneath.</p>
           </div>
-          <div class="card">
-            <div class="ico">⌨️</div>
-            <h3>SQL editor</h3>
-            <p>CodeMirror 6 with autocomplete, 17 snippets, Vim mode, formatting, multi-tab, multi-statement, find/replace.</p>
+        </div>
+        <div class="engines">
+          <div class="engine">
+            <span class="dot" style="background:var(--pine)"></span>
+            <h3>PostgreSQL</h3>
+            <p>Full introspection, foreign keys, SSL modes, and SSH tunnels. Column names resolve even for empty tables.</p>
           </div>
-          <div class="card">
-            <div class="ico">▦</div>
-            <h3>Data grid</h3>
-            <p>Inline editing, column resize/visibility, 18 filter operators, sorting, pagination, FK navigation, and change tracking with SQL preview.</p>
+          <div class="engine">
+            <span class="dot" style="background:var(--amber)"></span>
+            <h3>MySQL / MariaDB</h3>
+            <p>Binary-protocol queries, index and key discovery, and the same connection options as Postgres.</p>
           </div>
-          <div class="card">
-            <div class="ico">🔍</div>
-            <h3>Cell inspector</h3>
-            <p>A detail sidebar for wide tables, with per-field copy so you never lose a value in a sea of columns.</p>
-          </div>
-          <div class="card">
-            <div class="ico">◈</div>
-            <h3>Schema tools</h3>
-            <p>Structure viewer, data profiling (null %, distribution), and schema comparison with ALTER migration generation.</p>
-          </div>
-          <div class="card">
-            <div class="ico">🕸️</div>
-            <h3>ER diagram</h3>
-            <p>An auto-generated SVG relationship diagram with draggable nodes and zoom for mapping your schema at a glance.</p>
-          </div>
-          <div class="card">
-            <div class="ico">📊</div>
-            <h3>Charts</h3>
-            <p>Bar, line, and pie visualizations rendered straight from query results — zero dependencies.</p>
-          </div>
-          <div class="card">
-            <div class="ico">🔄</div>
-            <h3>Import / Export</h3>
-            <p>CSV, JSON, and SQL with native file dialogs, clipboard paste, and drag-and-drop of .sql files.</p>
-          </div>
-          <div class="card">
-            <div class="ico">🎲</div>
-            <h3>Mock data</h3>
-            <p>Type-aware generation for names, emails, dates, UUIDs, and more to fill tables for testing.</p>
-          </div>
-          <div class="card">
-            <div class="ico">⏺️</div>
-            <h3>Macros</h3>
-            <p>Record, replay, manage, and export/import action sequences to automate the things you do every day.</p>
-          </div>
-          <div class="card">
-            <div class="ico">⎈</div>
-            <h3>Command palette</h3>
-            <p>Cmd+P to quick-jump to tables, queries, and actions without lifting your hands off the keyboard.</p>
-          </div>
-          <div class="card">
-            <div class="ico">🧩</div>
-            <h3>Plugin system</h3>
-            <p>Install and manage database drivers, export formats, and themes. Full light and dark themes across every component.</p>
+          <div class="engine">
+            <span class="dot" style="background:#3a6f60"></span>
+            <h3>SQLite</h3>
+            <p>Open a file and go. Pragmatic introspection through <code style="font-family:var(--mono);font-size:12px">PRAGMA</code>, no server required.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- architecture -->
-    <section class="block" id="architecture">
+    <!-- FEATURES -->
+    <section class="section" id="features">
       <div class="wrap">
-        <div class="eyebrow">Tech stack</div>
-        <h2>Native speed, a modern UI, and Bun's built-in drivers.</h2>
-        <div class="split">
-          <ul>
-            <li><span class="ck">✦</span><span><b>Butter runtime</b> — Bun plus a native webview, so the app ships small and starts fast.</span></li>
-            <li><span class="ck">✦</span><span><b>React 19 + Mantine 8</b> — a polished component UI with Tanstack Router and Tanstack Query underneath.</span></li>
-            <li><span class="ck">✦</span><span><b>CodeMirror 6</b> — the SQL editor, with sql-formatter and Vim keybindings built in.</span></li>
-            <li><span class="ck">✦</span><span><b>Bun built-in DB drivers</b> — Postgres, SQLite, and MySQL talk to the database with no extra native deps.</span></li>
-            <li><span class="ck">✦</span><span><b>Lucide icons · MIT licensed</b> — clean iconography across a codebase of 77 source files.</span></li>
-          </ul>
-          <div class="diagram">        Ambry desktop app
-                 │
-       React 19 + Mantine 8 UI
-                 │
-     CodeMirror · Tanstack Query
-                 │
-        Butter (Bun + webview)
-                 │
-      ┌──────────┴───────────┐
-  Bun drivers           file dialogs
- Postgres·MySQL·SQLite   import/export</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- get started -->
-    <section class="block" id="start">
-      <div class="wrap">
-        <div class="eyebrow">Get started</div>
-        <h2>Install on macOS in one command.</h2>
-        <p class="sub">The 1.0 release ships macOS (Apple Silicon / arm64) only. Homebrew strips quarantine so it launches clean.</p>
-        <div class="code" style="margin-top: 32px; max-width: 720px">
-          <div class="top">
-            <span>install — homebrew</span>
-            <button class="copy" data-copy>Copy</button>
+        <div class="section-head">
+          <span class="idx">02</span>
+          <div>
+            <h2>Built for the work, not the demo</h2>
+            <p>Everything you reach for in a day with a database — read, edit, query, inspect — in a tool that stays out of the way.</p>
           </div>
-          <pre data-code><span class="c"># recommended: install the cask</span>
-brew install --cask wess/packages/ambry
-
-<span class="c"># first time using this tap</span>
-brew tap wess/packages
-brew install --cask ambry</pre>
         </div>
-        <div class="code" style="margin-top: 24px; max-width: 720px">
-          <div class="top">
-            <span>develop from source</span>
-            <button class="copy" data-copy>Copy</button>
+        <div class="cells">
+          <div class="cell">
+            <div class="k">grid</div>
+            <h3>An editable grid</h3>
+            <p>Double-click to edit, multi-select rows, sort by any column, and drag column edges to resize. Edits collect as pending changes you review as SQL before you commit.</p>
           </div>
-          <pre data-code><span class="c"># clone, install deps, and run in dev</span>
-git clone https://github.com/wess/ambry
-cd ambry
-bun install
-bun run dev</pre>
+          <div class="cell">
+            <div class="k">editor</div>
+            <h3>A fast SQL editor</h3>
+            <p>Syntax-highlighted SQL with multi-statement execution. Run with <kbd>⌘↵</kbd>, read results in the same grid, and pull from query history.</p>
+          </div>
+          <div class="cell">
+            <div class="k">schema</div>
+            <h3>Structure at a glance</h3>
+            <p>Columns, indexes, and foreign keys for any table, read straight from the live schema — not a cached guess.</p>
+          </div>
+          <div class="cell">
+            <div class="k">connect</div>
+            <h3>Connections that travel</h3>
+            <p>SSL/TLS and SSH tunnels, groups and tags, safe mode, startup commands, and a live health check — saved as plain JSON you can read.</p>
+          </div>
+          <div class="cell">
+            <div class="k">engines</div>
+            <h3>One tool, every engine</h3>
+            <p>Postgres, MySQL/MariaDB, and SQLite behind the same grid and editor. When a connection has more than one database, switch between them in place.</p>
+          </div>
+          <div class="cell">
+            <div class="k">local</div>
+            <h3>Local and yours</h3>
+            <p>Connections, history, and settings live under <code style="font-family:var(--mono);font-size:12px">~/.ambry</code> as files you can read. Nothing phones home. MIT-licensed, source in the open.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- cta band -->
-    <section class="band">
+    <!-- PINE FIELD: the workflow -->
+    <section class="field">
       <div class="wrap">
-        <h2>Open the database, close the friction.</h2>
-        <p>Ambry is MIT licensed and open source. Grab the latest release or build it yourself.</p>
-        <div class="cta">
-          <a class="btn primary" href="docs.html">Read the docs</a>
-          <a class="btn ghost" href="https://github.com/wess/ambry">Star it on GitHub →</a>
+        <div class="eyebrow"><span class="tick"></span> the workflow</div>
+        <h2>See it, edit it, commit it — without leaving the grid.</h2>
+        <p>
+          Change a cell, insert a row, delete a few — every edit collects as a
+          pending change and stays right there in the grid, marked in amber.
+          When you’re ready, review the whole batch as the exact SQL it will run,
+          then commit. You never issue a write you didn’t read first.
+        </p>
+        <div class="stats">
+          <div class="stat"><b>3</b><span>engines · postgres, mysql, sqlite</span></div>
+          <div class="stat"><b>SQL</b><span>preview every change before you commit</span></div>
+          <div class="stat"><b>MIT</b><span>open source · source in the open</span></div>
         </div>
       </div>
     </section>
 
-    <footer>
+    <!-- INSTALL -->
+    <section class="section" id="install">
       <div class="wrap">
-        <a class="brand" href="index.html"><span class="mark">▤</span> Ambry</a>
-        <div class="links">
-          <a href="docs.html">Docs</a>
-          <a href="../docs/architecture.md">Architecture</a>
-          <a href="../docs/shortcuts.md">Shortcuts</a>
-          <a href="https://github.com/wess/ambry">GitHub</a>
-          <a href="https://github.com/wess/butter">Butter</a>
+        <div class="section-head">
+          <span class="idx">03</span>
+          <div>
+            <h2>Install</h2>
+            <p>macOS on Apple Silicon. Install with Homebrew, or download the disk image directly.</p>
+          </div>
         </div>
-        <span>MIT · © 2026</span>
+        <div class="install">
+          <div>
+            <h3>Homebrew</h3>
+            <p>Recommended — Homebrew clears the quarantine flag, so it launches clean.</p>
+            <div class="code">
+              <span><span class="prompt">$ </span>brew install --cask wess/packages/ambry</span>
+              <button class="copybtn" data-copy="brew install --cask wess/packages/ambry">copy</button>
+            </div>
+          </div>
+          <div>
+            <h3>Direct download</h3>
+            <p>Grab the disk image, mount it, and drag Ambry into Applications.</p>
+            <a class="btn primary" href="https://github.com/wess/ambry/releases/latest">Download Ambry.dmg ↓</a>
+          </div>
+        </div>
+        <p style="font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:18px">
+          Seeing a “damaged” warning on a direct download? Clear the quarantine flag once —
+          the steps are in the <a href="docs.html#install" style="color:var(--pine);text-decoration:underline;text-underline-offset:2px">docs</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="foot">
+      <div class="wrap">
+        <div>
+          <a class="brand" href="index.html"><span class="mark">▤</span> Ambry</a>
+          <p class="fine" style="margin-top:14px;max-width:34ch;line-height:1.6">
+            An open-source database client for PostgreSQL, MySQL, and SQLite.
+          </p>
+        </div>
+        <div class="cols">
+          <div>
+            <h4>Product</h4>
+            <a href="#features">Features</a>
+            <a href="docs.html">Documentation</a>
+            <a href="https://github.com/wess/ambry/releases">Releases</a>
+          </div>
+          <div>
+            <h4>Source</h4>
+            <a href="https://github.com/wess/ambry">Repository</a>
+            <a href="https://github.com/wess/ambry/issues">Issues</a>
+            <a href="https://github.com/wess/ambry/releases/latest">Download</a>
+          </div>
+          <div>
+            <h4>Docs</h4>
+            <a href="docs.html#getting-started">Getting started</a>
+            <a href="docs.html#data-grid">The data grid</a>
+            <a href="docs.html#shortcuts">Keyboard shortcuts</a>
+          </div>
+        </div>
+      </div>
+      <div class="wrap" style="margin-top:40px">
+        <span class="fine">MIT · open source · © 2026 Wess Cope</span>
       </div>
     </footer>
 

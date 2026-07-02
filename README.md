@@ -1,80 +1,44 @@
 # Ambry
 
-An open-source database client built with [Butter](https://github.com/wess/butter), React, and Mantine.
+An open-source desktop database client for **PostgreSQL**, **MySQL/MariaDB**, and **SQLite** — an editable data grid, a fast SQL editor, and schema tools in one quick, keyboard-friendly app.
 
-Supports **PostgreSQL**, **MySQL/MariaDB**, and **SQLite** via Bun's built-in drivers.
+**Docs:** [wess.io/ambry](https://wess.io/ambry) · [Documentation](https://wess.io/ambry/docs.html)
 
-> **Platform support:** the 1.0 release ships macOS (Apple Silicon / arm64) only. The Homebrew cask requires `arm64`, and CI builds on macOS. Linux, Windows, and Intel-mac builds are not currently distributed.
+> **Platform:** the current build targets macOS (Apple Silicon / arm64). Linux and Windows are not distributed yet.
 
 ## Install
 
 **macOS — Homebrew (recommended).** Homebrew strips the quarantine attribute on install, so the app launches without a "damaged" prompt.
 
 ```bash
-brew install --cask wess/packages/ambry
-```
-
-First time installing from this tap:
-
-```bash
 brew tap wess/packages
 brew install --cask ambry
 ```
 
-**macOS — direct download.** Grab `Ambry.dmg` from the [latest release](https://github.com/wess/ambry/releases/latest), mount it, and drag Ambry into Applications.
+Or in one line:
 
-If macOS shows *"Ambry is damaged and can't be opened"*, the release wasn't notarized for that build — remove the quarantine flag once and re-open:
+```bash
+brew install --cask wess/packages/ambry
+```
+
+**macOS — direct download.** Grab `Ambry.dmg` from the [latest release](https://github.com/wess/ambry/releases/latest), mount it, and drag Ambry into Applications. If macOS reports *"Ambry is damaged and can't be opened,"* that build wasn't notarized — clear the quarantine flag once:
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/Ambry.app
 ```
 
-Notarized releases (CI builds with Apple Developer credentials configured) skip this step entirely.
-
-## Quick Start (development)
-
-```bash
-bun install
-bun run dev
-```
-
 ## Features
 
-- **Connection management** — SSL/TLS, SSH tunneling, URL parsing, groups, tags, safe mode, startup commands, health monitoring
-- **SQL editor** — CodeMirror 6 with autocomplete, 17 snippets, Vim mode, formatting, multi-tab, multi-statement, find/replace
-- **Data grid** — inline editing, column resize/visibility, filtering (18 operators), sorting, pagination, FK navigation, change tracking with SQL preview
-- **Cell inspector** — detail sidebar for wide tables with per-field copy
-- **Schema tools** — structure viewer, data profiling (null %, distribution), schema comparison with ALTER migration generation
-- **ER diagram** — auto-generated SVG relationship diagram with draggable nodes and zoom
-- **Charts** — bar, line, pie visualizations from query results (zero deps)
-- **Import/Export** — CSV, JSON, SQL with native file dialogs, clipboard paste, drag-and-drop .sql
-- **Mock data** — type-aware generation (names, emails, dates, UUIDs, etc.)
-- **Macros** — record, replay, manage, export/import action sequences
-- **Command palette** (Cmd+P) — quick jump to tables, queries, actions
-- **Settings** — theme (light/dark/system), editor config, grid config, persisted to disk
-- **Plugin system** — install/manage database drivers, export formats, and themes
-- **Full light and dark theme** support across all components
+- **Editable data grid** — inline cell editing, multi-select (⌘/⇧-click), column sort, drag-to-resize columns, horizontal scroll, and pagination. Edits stage as pending changes you review as SQL and commit as a batch.
+- **SQL editor** — syntax-highlighted, multi-statement execution (⌘↵), results in the same grid, and query history.
+- **Schema tools** — structure viewer for columns, indexes, and foreign keys, read from the live schema.
+- **Connections** — SSL/TLS, SSH tunnels, groups, tags, safe mode, startup commands, and a background health check.
+- **Multi-engine** — Postgres, MySQL/MariaDB, and SQLite behind the same grid; switch databases in place.
+- **Mock data** — type-aware row generation for filling a table.
+- **Local & open** — connections, history, and settings persist as plain files under `~/.ambry`. Nothing phones home. MIT-licensed.
 
-## Documentation
-
-- [Architecture](docs/architecture.md) — codebase structure and data flow
-- [Configuration](docs/configuration.md) — butter.yaml, app settings, connection settings
-- [Keyboard Shortcuts](docs/shortcuts.md) — all shortcuts and SQL snippets
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Runtime | [Butter](https://github.com/wess/butter) 1.0 (Bun + native webview) |
-| Frontend | React 19, Mantine 8, Tanstack Router, Tanstack Query |
-| Editor | CodeMirror 6, sql-formatter, @replit/codemirror-vim |
-| Icons | Lucide React |
-| DB Drivers | Bun built-in (postgres, sqlite, mysql) |
-
-## Stats
-
-- 77 source files
+More landing soon — the filter panel and column visibility, CSV/JSON/SQL import & export, data profiling, schema comparison, the ER diagram, charts, favorites, and the command palette. See [what's next](https://wess.io/ambry/docs.html#roadmap).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT © Wess Cope

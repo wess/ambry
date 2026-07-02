@@ -3,90 +3,390 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Documentation — Ambry</title>
-    <meta name="description" content="Documentation for Ambry: architecture and data flow, configuration (butter.yaml, app and connection settings), keyboard shortcuts, and the source." />
+    <title>Ambry — Documentation</title>
+    <meta
+      name="description"
+      content="Documentation for Ambry, a database client for PostgreSQL, MySQL, and SQLite: connections, the data grid, the SQL editor, configuration, and storage."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="styles.css" />
-    <style>:root{--accent:#3fb6a8;--accent2:#2f7fd1}</style>
   </head>
   <body>
     <nav class="nav">
       <div class="wrap">
         <a class="brand" href="index.html"><span class="mark">▤</span> Ambry</a>
-        <button class="navtoggle" aria-label="Menu" data-nav>☰</button>
+        <button class="navtoggle" aria-label="Menu" data-nav>≡</button>
         <div class="navlinks" data-navlinks>
           <a href="index.html#features">Features</a>
-          <a href="index.html#architecture">Tech</a>
+          <a href="index.html#install">Install</a>
           <a href="docs.html">Docs</a>
-          <a class="btn primary" href="https://github.com/wess/ambry">GitHub</a>
+          <a class="cta" href="https://github.com/wess/ambry">GitHub ↗</a>
         </div>
       </div>
     </nav>
 
-    <header class="dochero">
-      <div class="wrap">
-        <div class="eyebrow">Documentation</div>
-        <h2 style="font-size: clamp(28px, 5vw, 40px); font-weight: 800; letter-spacing: -0.02em">Everything about Ambry.</h2>
-        <p class="sub">
-          The reference lives as Markdown in the <code>docs/</code> folder. Start with the architecture, learn how to
-          configure connections and the app, then keep the shortcuts close. Each card links straight to the source.
-        </p>
-      </div>
-    </header>
-
-    <main class="wrap">
-      <div class="docsection">Reference</div>
-      <div class="docgrid">
-        <a class="doccard" href="../docs/architecture.md">
-          <div class="t"><span class="ico">🏗️</span> Architecture</div>
-          <p>Codebase structure and data flow — how the pieces fit together.</p>
-        </a>
-        <a class="doccard" href="../docs/configuration.md">
-          <div class="t"><span class="ico">⚙️</span> Configuration</div>
-          <p>butter.yaml, app settings, and connection settings explained.</p>
-        </a>
-        <a class="doccard" href="../docs/shortcuts.md">
-          <div class="t"><span class="ico">⌨️</span> Keyboard shortcuts</div>
-          <p>Every shortcut, plus the 17 SQL snippets in the editor.</p>
-        </a>
-      </div>
-
-      <div class="docsection">Project</div>
-      <div class="docgrid">
-        <a class="doccard" href="../README.md">
-          <div class="t"><span class="ico">📖</span> Readme</div>
-          <p>Install options, the feature list, the tech stack, and the license.</p>
-        </a>
-        <a class="doccard" href="https://github.com/wess/ambry">
-          <div class="t"><span class="ico">🐙</span> Source</div>
-          <p>The full repository on GitHub — browse the 77 source files.</p>
-        </a>
-        <a class="doccard" href="https://github.com/wess/ambry/issues">
-          <div class="t"><span class="ico">🐞</span> Issues</div>
-          <p>Report a bug or request a feature on the issue tracker.</p>
-        </a>
-        <a class="doccard" href="https://github.com/wess/ambry/releases/latest">
-          <div class="t"><span class="ico">📦</span> Releases</div>
-          <p>Download the latest Ambry.dmg or check out what changed.</p>
-        </a>
-        <a class="doccard" href="https://github.com/wess/butter">
-          <div class="t"><span class="ico">🧈</span> Butter</div>
-          <p>The Bun + native webview runtime Ambry is built on.</p>
-        </a>
-      </div>
-    </main>
-
-    <footer style="margin-top: 60px">
-      <div class="wrap">
-        <a class="brand" href="index.html"><span class="mark">▤</span> Ambry</a>
-        <div class="links">
-          <a href="index.html">Home</a>
-          <a href="../docs/architecture.md">Architecture</a>
-          <a href="../README.md">Readme</a>
-          <a href="https://github.com/wess/ambry">GitHub</a>
+    <div class="docs">
+      <!-- SIDEBAR -->
+      <aside class="docnav">
+        <div class="group">
+          <span>Getting started</span>
+          <a href="#getting-started">Introduction</a>
+          <a href="#install">Install</a>
+          <a href="#first-connection">First connection</a>
         </div>
-        <span>MIT · © 2026</span>
-      </div>
-    </footer>
+        <div class="group">
+          <span>Using Ambry</span>
+          <a href="#connections">Connections</a>
+          <a href="#data-grid">The data grid</a>
+          <a href="#editing">Editing &amp; commits</a>
+          <a href="#query">The SQL editor</a>
+          <a href="#structure">Structure</a>
+          <a href="#databases">Switching databases</a>
+          <a href="#shortcuts">Keyboard shortcuts</a>
+        </div>
+        <div class="group">
+          <span>Reference</span>
+          <a href="#engines">Engines</a>
+          <a href="#configuration">Configuration</a>
+          <a href="#storage">Storage &amp; files</a>
+          <a href="#roadmap">What’s next</a>
+        </div>
+      </aside>
+
+      <!-- CONTENT -->
+      <main class="doc">
+        <div class="crumb">docs / ambry</div>
+
+        <section id="getting-started">
+          <h1>Documentation</h1>
+          <p class="lead">
+            Ambry is an open-source desktop database client for PostgreSQL, MySQL,
+            and SQLite. It puts an editable data grid, a fast SQL editor, and schema
+            tools behind one quick, keyboard-friendly app.
+          </p>
+          <p>
+            This guide covers everything from your first connection to the file
+            formats Ambry writes. If you just want to install it, jump to
+            <a class="link" href="#install">Install</a>.
+          </p>
+          <div class="callout">
+            <b>PLATFORM</b>
+            The current build targets <strong>macOS on Apple Silicon (arm64)</strong>.
+            Linux and Windows are not distributed yet.
+          </div>
+        </section>
+
+        <section id="install">
+          <h2>Install</h2>
+          <h3>Homebrew (recommended)</h3>
+          <p>
+            Homebrew strips the macOS quarantine attribute on install, so the app
+            launches without a “damaged” prompt.
+          </p>
+          <pre><code><span class="c"># first time — tap the cask repository</span>
+brew tap wess/packages
+brew install --cask ambry
+
+<span class="c"># or in one line</span>
+brew install --cask wess/packages/ambry</code></pre>
+
+          <h3>Direct download</h3>
+          <p>
+            Grab <code>Ambry.dmg</code> from the
+            <a class="link" href="https://github.com/wess/ambry/releases/latest">latest release</a>,
+            mount it, and drag Ambry into Applications. If macOS reports the app is
+            “damaged,” that build wasn’t notarized — clear the quarantine flag once:
+          </p>
+          <pre><code>xattr -dr com.apple.quarantine /Applications/Ambry.app</code></pre>
+          <p>Notarized builds skip this step entirely.</p>
+        </section>
+
+        <section id="first-connection">
+          <h2>First connection</h2>
+          <p>
+            Ambry opens to a connection list. Click <strong>New Connection</strong>
+            (or press <kbd>⌘N</kbd>) to open the connection form.
+          </p>
+          <ol>
+            <li>Give the connection a <strong>name</strong> and pick a <strong>type</strong> — PostgreSQL, MySQL / MariaDB, or SQLite.</li>
+            <li>For Postgres and MySQL, fill in <strong>host</strong>, <strong>port</strong>, <strong>database</strong>, <strong>username</strong>, and <strong>password</strong>. For SQLite, give a <strong>file path</strong> instead.</li>
+            <li>Click <strong>Test</strong> to verify the connection — Ambry connects, reads the server version, and reports back.</li>
+            <li>Click <strong>Create</strong> to save it. Back on the list, click <strong>Connect</strong> to open the workspace.</li>
+          </ol>
+          <p>
+            Connections are saved to <code>~/.ambry/connections.json</code> — plain
+            JSON you can read, back up, or edit by hand.
+          </p>
+        </section>
+
+        <section id="connections">
+          <h2>Connections</h2>
+          <p>
+            Every connection carries more than a host and password. The form’s
+            General tab covers the essentials; the connection format also supports
+            transport security and tunneling.
+          </p>
+          <table>
+            <thead><tr><th>Field</th><th>Applies to</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>name</code></td><td>all</td><td>Display name in the connection list.</td></tr>
+              <tr><td><code>type</code></td><td>all</td><td><code>postgres</code>, <code>mysql</code>, or <code>sqlite</code>.</td></tr>
+              <tr><td><code>host</code> / <code>port</code></td><td>pg, mysql</td><td>Server address. Defaults: 5432 (pg), 3306 (mysql).</td></tr>
+              <tr><td><code>database</code></td><td>pg, mysql</td><td>Database to open on connect.</td></tr>
+              <tr><td><code>filepath</code></td><td>sqlite</td><td>Path to the <code>.db</code> / <code>.sqlite</code> file.</td></tr>
+              <tr><td><code>color</code></td><td>all</td><td>Accent color for the connection card.</td></tr>
+              <tr><td><code>group</code> / <code>tags</code></td><td>all</td><td>Organize the connection list into labeled groups.</td></tr>
+              <tr><td><code>safeMode</code></td><td>all</td><td><code>off</code>, <code>confirm</code>, or <code>readonly</code> — guards against accidental writes.</td></tr>
+              <tr><td><code>startupCommands</code></td><td>all</td><td>SQL run automatically on connect, one statement per line.</td></tr>
+              <tr><td><code>ssl</code></td><td>pg, mysql</td><td>TLS mode plus optional CA / client cert / key paths.</td></tr>
+              <tr><td><code>ssh</code></td><td>pg, mysql</td><td>SSH tunnel — host, port, user, and password or key auth.</td></tr>
+            </tbody>
+          </table>
+          <p>
+            When a connection defines an SSH tunnel, Ambry opens it before
+            connecting and routes traffic through <code>127.0.0.1</code> on a local
+            port, closing it again on disconnect. A background health check probes
+            each live connection every 30 seconds.
+          </p>
+          <div class="callout">
+            <b>NOTE</b>
+            The General fields have full form controls today. SSL and SSH settings
+            round-trip when you edit an existing connection; dedicated editors for
+            them are on the <a class="link" href="#roadmap">roadmap</a>. In the
+            meantime you can set the <code>ssl</code> / <code>ssh</code> objects in
+            <code>connections.json</code> directly — see
+            <a class="link" href="#storage">Storage &amp; files</a>.
+          </div>
+        </section>
+
+        <section id="data-grid">
+          <h2>The data grid</h2>
+          <p>
+            Select a table in the sidebar and its rows load into the grid on the
+            <strong>Data</strong> tab. The grid is the heart of Ambry — it is not a
+            read-only preview.
+          </p>
+          <h3>Reading</h3>
+          <ul>
+            <li><strong>Sort</strong> by clicking a column header; click again to flip direction. An arrow marks the sorted column.</li>
+            <li><strong>Resize</strong> a column by dragging its right edge. Widths are per-column.</li>
+            <li><strong>Scroll</strong> horizontally when a table is wider than the window — every column stays at its own width.</li>
+            <li><strong>Page</strong> through large tables with the pager at the bottom; page size follows your <a class="link" href="#configuration">settings</a>.</li>
+            <li><code>NULL</code> values render distinctly, and foreign-key columns are marked so you can tell references from plain values.</li>
+          </ul>
+          <h3>Selecting</h3>
+          <table>
+            <thead><tr><th>Action</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Click a row</td><td>Select just that row.</td></tr>
+              <tr><td><kbd>⌘</kbd> + click</td><td>Toggle a row in or out of the selection.</td></tr>
+              <tr><td><kbd>⇧</kbd> + click</td><td>Select a contiguous range.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="editing">
+          <h2>Editing &amp; commits</h2>
+          <p>
+            Ambry batches every change and shows you the SQL before anything touches
+            the database. Nothing is written until you commit.
+          </p>
+          <h3>Making changes</h3>
+          <ul>
+            <li><strong>Edit a cell:</strong> double-click it, type, and press <kbd>Enter</kbd> to stage the change (or <kbd>Esc</kbd> to cancel). The cell highlights amber to show it is pending.</li>
+            <li><strong>Insert a row:</strong> click <strong>Insert</strong>, fill in the fields you want, and submit. Empty fields fall through to the column’s database default.</li>
+            <li><strong>Delete rows:</strong> select one or more rows and click <strong>Delete</strong> — they are staged for deletion and struck through.</li>
+            <li><strong>Generate data:</strong> click <strong>Generate</strong> to insert mock rows shaped by each column’s type — handy for filling a fresh table.</li>
+          </ul>
+          <h3>Reviewing &amp; committing</h3>
+          <p>
+            A bar appears with a count of pending changes. Click <strong>Review</strong>
+            to see every change as the exact <code>UPDATE</code>, <code>INSERT</code>,
+            or <code>DELETE</code> statement it will run, grouped by kind. From there:
+          </p>
+          <ul>
+            <li><strong>Commit</strong> applies every change in order, then refreshes the grid.</li>
+            <li><strong>Discard</strong> throws the whole batch away — nothing was written.</li>
+          </ul>
+          <div class="callout">
+            <b>WHY IT WORKS THIS WAY</b>
+            Staging changes and previewing them as SQL means you never issue a write
+            you didn’t read first. The amber highlight in the grid is the same signal
+            used across this site: amber always means “pending / live.”
+          </div>
+        </section>
+
+        <section id="query">
+          <h2>The SQL editor</h2>
+          <p>
+            The <strong>Query</strong> tab is a syntax-highlighted SQL editor bound
+            to the active connection.
+          </p>
+          <ul>
+            <li>Run the buffer with <kbd>⌘↵</kbd> or the <strong>Run</strong> button.</li>
+            <li>Multiple statements separated by semicolons run in sequence.</li>
+            <li>Results come back into the same grid used on the Data tab — same reading, sorting, and column behavior.</li>
+            <li>A statement that returns no rows reports how many rows it affected and how long it took.</li>
+            <li>Every executed statement is recorded in query history under <code>~/.ambry/history.json</code> (newest first, capped at 500).</li>
+          </ul>
+          <pre><code><span class="c">-- runs against the active connection</span>
+<span class="g">SELECT</span> customer, <span class="g">sum</span>(total) <span class="g">AS</span> revenue
+<span class="g">FROM</span> orders
+<span class="g">WHERE</span> status = <span class="g">'paid'</span>
+<span class="g">GROUP BY</span> customer
+<span class="g">ORDER BY</span> revenue <span class="g">DESC</span>;</code></pre>
+        </section>
+
+        <section id="structure">
+          <h2>Structure</h2>
+          <p>
+            The <strong>Structure</strong> tab reads a table’s shape directly from
+            the live schema — never a cached guess:
+          </p>
+          <ul>
+            <li><strong>Columns</strong> — name, type, nullability, default, and whether each is part of the primary key.</li>
+            <li><strong>Indexes</strong> — name, the columns covered, type, and uniqueness.</li>
+            <li><strong>Foreign keys</strong> — name, the local columns, and the table and columns they reference.</li>
+          </ul>
+        </section>
+
+        <section id="databases">
+          <h2>Switching databases</h2>
+          <p>
+            When a Postgres or MySQL connection exposes more than one database, a
+            selector appears in the sidebar above the table list. Choosing a
+            different database reconnects to it in place and reloads the table list —
+            no need to define a separate connection per database. SQLite connections,
+            which are a single file, don’t show the selector.
+          </p>
+        </section>
+
+        <section id="shortcuts">
+          <h2>Keyboard shortcuts</h2>
+          <table>
+            <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><kbd>⌘N</kbd></td><td>New connection</td></tr>
+              <tr><td><kbd>⌘↵</kbd></td><td>Run the query buffer</td></tr>
+              <tr><td>Double-click</td><td>Edit the cell under the cursor</td></tr>
+              <tr><td><kbd>Enter</kbd></td><td>Commit the cell edit (while editing)</td></tr>
+              <tr><td><kbd>Esc</kbd></td><td>Cancel the cell edit</td></tr>
+              <tr><td><kbd>⌘</kbd> / <kbd>⇧</kbd> + click</td><td>Toggle / range-select rows</td></tr>
+              <tr><td><kbd>⌘H</kbd></td><td>Hide Ambry</td></tr>
+              <tr><td><kbd>⌘Q</kbd></td><td>Quit</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="engines">
+          <h2>Engines</h2>
+          <p>
+            The grid, editor, and schema tools work the same across every engine;
+            only the introspection underneath differs.
+          </p>
+          <h3>PostgreSQL</h3>
+          <p>
+            Full schema introspection, foreign-key discovery, TLS modes, and SSH
+            tunnels. Result columns are read from prepared-statement metadata, so an
+            empty table still reports its columns.
+          </p>
+          <h3>MySQL / MariaDB</h3>
+          <p>
+            Queries and introspection run over the binary protocol. Indexes and
+            foreign keys are discovered from <code>information_schema</code>.
+          </p>
+          <h3>SQLite</h3>
+          <p>
+            Open a file and go — no server. Schema details come from
+            <code>PRAGMA table_info</code>, <code>index_list</code>, and
+            <code>foreign_key_list</code>.
+          </p>
+        </section>
+
+        <section id="configuration">
+          <h2>Configuration</h2>
+          <p>
+            Settings live in <code>~/.ambry/settings.json</code>. Missing keys fall
+            back to defaults, so a partial file is fine.
+          </p>
+          <table>
+            <thead><tr><th>Key</th><th>Default</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><code>theme</code></td><td><code>"dark"</code></td><td>Color scheme — <code>light</code>, <code>dark</code>, or <code>auto</code>.</td></tr>
+              <tr><td><code>editorFontSize</code></td><td><code>13</code></td><td>SQL editor font size, in points.</td></tr>
+              <tr><td><code>editorTabSize</code></td><td><code>2</code></td><td>Spaces per indent in the editor.</td></tr>
+              <tr><td><code>editorWordWrap</code></td><td><code>true</code></td><td>Wrap long lines in the editor.</td></tr>
+              <tr><td><code>gridPageSize</code></td><td><code>100</code></td><td>Rows fetched per page in the data grid.</td></tr>
+              <tr><td><code>gridRowHeight</code></td><td><code>"compact"</code></td><td><code>compact</code>, <code>normal</code>, or <code>comfortable</code>.</td></tr>
+              <tr><td><code>gridAlternateRows</code></td><td><code>true</code></td><td>Stripe alternating rows.</td></tr>
+              <tr><td><code>nullDisplay</code></td><td><code>"NULL"</code></td><td>How null values are printed in the grid.</td></tr>
+              <tr><td><code>dateFormat</code></td><td><code>"ISO 8601"</code></td><td>Date rendering format.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="storage">
+          <h2>Storage &amp; files</h2>
+          <p>
+            Everything Ambry remembers lives under <code>~/.ambry/</code> as plain
+            JSON. There is no database of its own, no hidden state, and nothing is
+            sent anywhere.
+          </p>
+          <table>
+            <thead><tr><th>File</th><th>Holds</th></tr></thead>
+            <tbody>
+              <tr><td><code>connections.json</code></td><td>Saved connections (a corrupt file is backed up and treated as empty).</td></tr>
+              <tr><td><code>settings.json</code></td><td>Your <a class="link" href="#configuration">preferences</a>.</td></tr>
+              <tr><td><code>history.json</code></td><td>Query history, newest first, capped at 500.</td></tr>
+              <tr><td><code>favorites.json</code></td><td>Saved queries.</td></tr>
+              <tr><td><code>tabs.json</code></td><td>Open editor tabs.</td></tr>
+              <tr><td><code>macros.json</code></td><td>Recorded macros.</td></tr>
+            </tbody>
+          </table>
+          <p>A stored connection looks like this — including the optional SSL and SSH blocks:</p>
+          <pre><code>{
+  <span class="g">"id"</span>: <span class="g">"…"</span>,
+  <span class="g">"name"</span>: <span class="g">"Production"</span>,
+  <span class="g">"type"</span>: <span class="g">"postgres"</span>,
+  <span class="g">"host"</span>: <span class="g">"db.internal"</span>,
+  <span class="g">"port"</span>: 5432,
+  <span class="g">"database"</span>: <span class="g">"app"</span>,
+  <span class="g">"username"</span>: <span class="g">"app"</span>,
+  <span class="g">"password"</span>: <span class="g">"…"</span>,
+  <span class="g">"ssl"</span>: { <span class="g">"mode"</span>: <span class="g">"required"</span> },
+  <span class="g">"ssh"</span>: {
+    <span class="g">"enabled"</span>: <span class="g">true</span>,
+    <span class="g">"host"</span>: <span class="g">"bastion.example.com"</span>,
+    <span class="g">"port"</span>: 22,
+    <span class="g">"username"</span>: <span class="g">"deploy"</span>,
+    <span class="g">"authMethod"</span>: <span class="g">"key"</span>,
+    <span class="g">"keyPath"</span>: <span class="g">"~/.ssh/id_ed25519"</span>
+  }
+}</code></pre>
+        </section>
+
+        <section id="roadmap">
+          <h2>What’s next</h2>
+          <p>
+            Available today: connections, the editable data grid with commits, the
+            SQL editor, structure, the database switcher, and mock data. Landing
+            next:
+          </p>
+          <ul>
+            <li>In-app SSL and SSH editors in the connection form.</li>
+            <li>The filter panel and column-visibility controls.</li>
+            <li>CSV / JSON / SQL import and export with system file dialogs.</li>
+            <li>Data profiling, schema comparison, and the ER diagram.</li>
+            <li>Charts from query results, saved favorites, and the command palette.</li>
+          </ul>
+          <p>
+            Track progress or open an issue on
+            <a class="link" href="https://github.com/wess/ambry">GitHub</a>.
+          </p>
+        </section>
+      </main>
+    </div>
 
     <script src="app.js"></script>
   </body>
