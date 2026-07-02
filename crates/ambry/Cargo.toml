@@ -1,0 +1,28 @@
+[package]
+name = "ambry"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "An open-source database client built with gpui and guise."
+
+[dependencies]
+gpui.workspace = true
+guise-ui.workspace = true
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+futures = "0.3"
+postgres = { version = "0.19", features = ["with-serde_json-1", "with-chrono-0_4", "with-uuid-1"] }
+postgres-native-tls = "0.5"
+native-tls = "0.2"
+mysql = "26"
+rusqlite = { version = "0.37", features = ["bundled"] }
+rust-embed = "8"
+regex = "1"
+rand = "0.9"
+anyhow = "1"
+sqlformat = "0.3"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4"] }
+url = "2"
+dirs = "6"

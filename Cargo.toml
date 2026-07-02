@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = ["crates/ambry"]
+exclude = ["guise"]
+
+[workspace.package]
+version = "2.0.0"
+edition = "2021"
+license = "MIT"
+authors = ["Wess Cope <opensource@wess.io>"]
+
+[workspace.dependencies]
+gpui = "0.2.2"
+guise-ui = { path = "guise/crates/guise", default-features = false }
+
+[profile.dev]
+debug = "limited"
+
+[profile.release]
+lto = "thin"

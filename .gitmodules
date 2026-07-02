@@ -1,0 +1,3 @@
+[submodule "guise"]
+	path = guise
+	url = https://github.com/wess/guise

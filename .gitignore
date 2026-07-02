@@ -258,3 +258,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Rust
+/target
