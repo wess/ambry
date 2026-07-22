@@ -42,3 +42,5 @@ More landing soon — the filter panel and column visibility, CSV/JSON/SQL impor
 ## License
 
 MIT © Wess Cope
+
+♥ [Sponsor this project](https://github.com/sponsors/wess)
